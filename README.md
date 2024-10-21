@@ -1,5 +1,5 @@
 # CameraBrick
-ESP32-CAM adaptation for use with LEGO Technic / Power Functions.
+ESP32-CAM adaptation for use as an FPV camera with LEGO Technic / Power Functions.
 This repo includes PCB instructions and modified code from CameraWebServer. 
 Main differences include:
 1. Lowest possible camera resoulution for highest possible framerate. Maximum FPS is dependend mainly on WiFi signal level and the hub's ability to provide enough electrical power to the camera module.
