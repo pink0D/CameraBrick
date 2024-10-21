@@ -14,7 +14,7 @@ Main differences include:
 
 1. ESP32-CAM board and camera
 2. ESP32-CAM-MB or other USB-Serial adapter for uploading the sketch
-3. 9V to 5V buck converter (N7805 or similar, capable to deliver 5V/1A). *Do not use older LM7805 since it is very inefficient - the power from the hub will be wasted, resulting in 1) even more extreme heating 2) quick battery drain 3) lower FPS due to undervoltage 4) possible damaging of the hub/battery*
+3. 9V to 5V buck converter (N7805 or similar, capable to deliver 5V/1A). **Do not use older LM7805 since it is very inefficient - the power from the hub will be wasted, resulting in 1) even more extreme heating 2) quick battery drain 3) lower FPS due to undervoltage 4) possible damaging of the hub/battery**
 4. 30x70mm PCB
 5. 2x female 8-pin headers
 6. Power Functions extension cable
@@ -31,9 +31,9 @@ Before soldering, please review the pinout of the Power Functions Connector [Pow
 # Uploading the sketch
 1. Install ESP32 Boards in Arudino IDE [https://docs.espressif.com/projects/arduino-esp32/en/latest/installing.html](https://docs.espressif.com/projects/arduino-esp32/en/latest/installing.html)
 2. Download sketch code from this repo
-3. Update *secrets.h* with your WiFi credentials
-4. *(optional)* Update *esp_camera_server.h* if you are usign a different camera. AI Thinker is the default option
-5. *(optional)* Update hostname in main sketch file. *fpvbrick* is the default hostname
+3. Update **secrets.h** with your WiFi credentials
+4. *(optional)* Update **esp_camera_server.h** if you are usign a different camera. AI Thinker is the default option
+5. *(optional)* Update hostname in main sketch file. **fpvbrick** is the default hostname
 6. Set board to ESP32 Dev Module and enable PSRAM in Tools menu
 7. Upload the sketch to ESP32CAM either using [ESP32-CAM-MB](https://randomnerdtutorials.com/upload-code-esp32-cam-mb-usb/) or [USB-Serial adapter](https://randomnerdtutorials.com/program-upload-code-esp32-cam/)
    
