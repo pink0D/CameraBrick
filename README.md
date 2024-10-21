@@ -5,6 +5,8 @@ Main differences include:
 1. Lowest possible camera resoulution for highest possible framerate. Maximum FPS is dependend mainly on WiFi signal level and the hub's ability to provide enough electrical power to the camera module.
 2. mDNS so you can reach the video server by hostname
 
+[YouTube demo video](https://www.youtube.com/watch?v=FWp9zUCGctc)
+
 # Important notice
 
 1. ESP32-CAM consumes quite a lot of electrical power and is very sensitive to undervoltage. Most LEGO compatible Power Functions remote hubs are able to provide required power, however if your vehicle also contains a lot of motors, you can drain the hub's battery very fast or even burn it. Think of a connected ESP32-Cam as if it is a constantly rotating L-motor at full speed.
