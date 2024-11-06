@@ -10,7 +10,7 @@ Main differences include:
 # GeekServo adapter
 This PCB and sketch can be also used as an adapter to control a GeekServo with a **Mould King Power Module 4.0**. You can use just the servo functionality without connecting the OV2640 camera module (but ESP32-CAM board is still required).
 
-[YouTube demo video - GeekServo](https://www.youtube.com/watch?v=FWp9zUCGctc)
+[YouTube demo video - GeekServo](https://www.youtube.com/watch?v=8iWpP2kZVIc)
 
 # Important notice
 
