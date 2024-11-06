@@ -12,6 +12,8 @@ This PCB and sketch can be also used as an adapter to control a GeekServo with a
 
 [YouTube demo video - GeekServo](https://www.youtube.com/watch?v=FWp9zUCGctc)
 
+<a href="https://postimg.cc/23VmS53c" target="_blank"><img src="https://i.postimg.cc/23VmS53c/IMG-9655.jpg" alt="IMG-9655"/></a>
+
 # Important notice
 
 1. The camera module consumes quite a lot of electrical power and is very sensitive to undervoltage. Most LEGO compatible Power Functions remote hubs are able to provide required power, however if your vehicle also contains a lot of motors, you can drain the hub's battery very fast or even burn it. Think of a connected cammera as if it is a constantly rotating L-motor at full speed.
@@ -43,6 +45,7 @@ You can order a factory made PCB to reduce soldering. Production files are locat
 After soldering the components the board should look like this
 
 <a href="https://postimg.cc/Btk3LGKq" target="_blank"><img src="https://i.postimg.cc/Btk3LGKq/IMG-9656.jpg" alt="IMG-9656" width="200"/></a>
+<a href="https://postimg.cc/cr3Sf5Rf" target="_blank"><img src="https://i.postimg.cc/cr3Sf5Rf/IMG-9657.jpg" alt="IMG-9657" width="200"/></a>
 
 ## Power Functions connector pinout
 Before soldering, please review the pinout of the Power Functions Connector [Power Functions](https://www.philohome.com/pf/pfcon.jpg)
