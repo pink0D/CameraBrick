@@ -41,6 +41,7 @@ If you experience power related issues, try adding [capacitors](https://github.c
 ## Production PCB
 You can order a factory made PCB to reduce soldering. Production files are located in PCB directory of this repo.
 After soldering the components the board should look like this
+
 <a href="https://postimg.cc/Btk3LGKq" target="_blank"><img src="https://i.postimg.cc/Btk3LGKq/IMG-9656.jpg" alt="IMG-9656" width="200"/></a>
 
 ## Power Functions connector pinout
