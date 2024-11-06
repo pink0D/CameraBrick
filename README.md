@@ -12,7 +12,7 @@ This PCB and sketch can be also used as an adapter to control a GeekServo with a
 
 [YouTube demo video - GeekServo](https://www.youtube.com/watch?v=FWp9zUCGctc)
 
-<a href="https://postimg.cc/23VmS53c" target="_blank"><img src="https://i.postimg.cc/23VmS53c/IMG-9655.jpg" alt="IMG-9655"/></a>
+<a href="https://www.youtube.com/watch?v=FWp9zUCGctc" target="_blank"><img src="https://i.postimg.cc/23VmS53c/IMG-9655.jpg" alt="IMG-9655"/></a>
 
 # Important notice
 
@@ -25,7 +25,7 @@ This PCB and sketch can be also used as an adapter to control a GeekServo with a
 2. (optional - only needed for the FPV) OV2640 camera module
 3. ESP32-CAM-MB or other USB-Serial adapter for uploading the sketch
 4. 9V to 5V buck converter (N7805 or similar, capable to deliver 5V/1A for the camera module). **Do not use older LM7805 for powering the camera since it is very inefficient - the power from the hub will be wasted, resulting in 1) even more extreme heating 2) quick battery drain 3) lower FPS due to undervoltage 4) possible damaging of the hub/battery.** If the board is used just as a GeekServo adapter (without enabling the FPV functionality) you can use a simple LM7805, which is sufficient for a servo.
-5. 30x70mm PCB breadboard or factory made PCB from files from this repo
+5. 30x70mm PCB breadboard or factory made PCB with files from this repo
 6. 2x female 8-pin headers 
 8. Power Functions extension cable
 9. (optional) Any kind of 2.54 4-wire connectors to solder on PCB and extension cable to make it detachable.
@@ -44,8 +44,8 @@ If you experience power related issues, try adding [capacitors](https://github.c
 You can order a factory made PCB to reduce soldering. Production files are located in PCB directory of this repo.
 After soldering the components the board should look like this
 
-<a href="https://postimg.cc/Btk3LGKq" target="_blank"><img src="https://i.postimg.cc/Btk3LGKq/IMG-9656.jpg" alt="IMG-9656" width="200"/></a>
-<a href="https://postimg.cc/cr3Sf5Rf" target="_blank"><img src="https://i.postimg.cc/cr3Sf5Rf/IMG-9657.jpg" alt="IMG-9657" width="200"/></a>
+<a href="https://postimg.cc/Btk3LGKq" target="_blank"><img src="https://i.postimg.cc/Btk3LGKq/IMG-9656.jpg" alt="IMG-9656"/></a>
+<a href="https://postimg.cc/cr3Sf5Rf" target="_blank"><img src="https://i.postimg.cc/cr3Sf5Rf/IMG-9657.jpg" alt="IMG-9657"/></a>
 
 ## Power Functions connector pinout
 Before soldering, please review the pinout of the Power Functions Connector [Power Functions](https://www.philohome.com/pf/pfcon.jpg)
