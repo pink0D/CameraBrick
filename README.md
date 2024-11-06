@@ -40,6 +40,8 @@ If you experience power related issues, try adding [capacitors](https://github.c
 
 ## Production PCB
 You can order a factory made PCB to reduce soldering. Production files are located in PCB directory of this repo.
+After soldering the components the board should look like this
+[![image1](https://i.postimg.cc/GhhmfL3s/IMG-9656.jpg | width=100)](https://postimg.cc/Btk3LGKq)
 
 ## Power Functions connector pinout
 Before soldering, please review the pinout of the Power Functions Connector [Power Functions](https://www.philohome.com/pf/pfcon.jpg)
