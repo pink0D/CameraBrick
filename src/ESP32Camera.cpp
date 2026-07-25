@@ -10,9 +10,7 @@
 
 #include "ESP32Camera.h"
 
-#include "img_converters.h"
-#include "fb_gfx.h"
-
+#include <img_converters.h>
 
 namespace camerabrick {
         

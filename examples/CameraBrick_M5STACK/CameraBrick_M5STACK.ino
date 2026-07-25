@@ -10,7 +10,7 @@
 #include <CameraBrick.h>
 
 void setup() {
-    CameraBrick.begin(ESP32CAM_OV2640(FRAMESIZE_CIF));
+    CameraBrick.begin(M5STACK_ATOM_S3R_M12_OV3660(FRAMESIZE_CIF));
 }
 
 void loop() {

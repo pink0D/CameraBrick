@@ -47,7 +47,7 @@ ESP32CAM_OV2640::ESP32CAM_OV2640(framesize_t _frame_size) {
     espCameraConfig.grab_mode = CAMERA_GRAB_LATEST;
     
     espCameraConfig.pixel_format = PIXFORMAT_JPEG;
-    espCameraConfig.jpeg_quality = 12;
+    espCameraConfig.jpeg_quality = 10;
     
     espCameraConfig.frame_size = _frame_size; 
 }
@@ -79,7 +79,7 @@ M5STACK_ATOM_S3R_M12_OV3660::M5STACK_ATOM_S3R_M12_OV3660(framesize_t _frame_size
     espCameraConfig.pin_pwdn = -1;
     espCameraConfig.pin_reset = -1;
 
-    espCameraConfig.sccb_i2c_port = 0;
+    //espCameraConfig.sccb_i2c_port = 0;
 
     espCameraConfig.xclk_freq_hz = 20000000;
 
@@ -88,9 +88,11 @@ M5STACK_ATOM_S3R_M12_OV3660::M5STACK_ATOM_S3R_M12_OV3660(framesize_t _frame_size
     espCameraConfig.grab_mode = CAMERA_GRAB_LATEST;
     
     espCameraConfig.pixel_format = PIXFORMAT_JPEG;
-    espCameraConfig.jpeg_quality = 12;
+    espCameraConfig.jpeg_quality = 10;
     
     espCameraConfig.frame_size = _frame_size; 
+
+    mirrorX = true;
 }
 
 M5STACK_ATOM_S3R_GC0308::M5STACK_ATOM_S3R_GC0308(framesize_t _frame_size) {
@@ -120,7 +122,7 @@ M5STACK_ATOM_S3R_GC0308::M5STACK_ATOM_S3R_GC0308(framesize_t _frame_size) {
     espCameraConfig.pin_pwdn = -1;
     espCameraConfig.pin_reset = -1;
 
-    espCameraConfig.sccb_i2c_port = 0;
+    //espCameraConfig.sccb_i2c_port = 0;
 
     espCameraConfig.xclk_freq_hz = 20000000;
 
@@ -129,7 +131,9 @@ M5STACK_ATOM_S3R_GC0308::M5STACK_ATOM_S3R_GC0308(framesize_t _frame_size) {
     espCameraConfig.grab_mode = CAMERA_GRAB_LATEST;
     
     espCameraConfig.pixel_format = PIXFORMAT_RGB565;
-    espCameraConfig.jpeg_quality = 12;
+    espCameraConfig.jpeg_quality = 10;
     
     espCameraConfig.frame_size = _frame_size; 
+
+    mirrorX = true;
 }

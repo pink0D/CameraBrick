@@ -16,7 +16,8 @@
 
 #include <Arduino.h>
 
-//#include "MouldKingino.h"
+#include <NimBLEDevice.h>
+#include <MouldKingino.h>
 
 #include "ESP32Camera.h"
 #include "ESP32CameraConfig.h"

@@ -11,8 +11,9 @@
 #include "WiFiManager.h"
 #include "StreamServer.h"
 
-#include "soc/soc.h"             
-#include "soc/rtc_cntl_reg.h"    
+#include <soc/soc.h>
+#include <soc/rtc_cntl_reg.h>
+#include <esp_chip_info.h>
 
 
 //global instance
@@ -22,12 +23,19 @@ namespace camerabrick {
 
     void CameraBrick::begin(ESP32Camera::Config cameraConfig) {
 
-        WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0);
+
+        esp_chip_info_t chip_info;
+        esp_chip_info(&chip_info);
+        
+        // disable browout check only for ESP32CAM and not for modern ESP32S3
+        if (chip_info.model != CHIP_ESP32S3) {
+            WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0);
+        }
 
         Serial.begin(115200);
         //Serial.setDebugOutput(true);
 
-        //NimBLEDevice::init("");
+        NimBLEDevice::init("");
 
         ESP32Camera::instance().setConfig(cameraConfig);
 
