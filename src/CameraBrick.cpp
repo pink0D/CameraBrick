@@ -27,18 +27,16 @@ namespace camerabrick {
         Serial.begin(115200);
         //Serial.setDebugOutput(true);
 
-        NimBLEDevice::init("");
+        //NimBLEDevice::init("");
 
         ESP32Camera::instance().setConfig(cameraConfig);
 
         WiFiManager::instance().begin();
 
         StreamServer::instance().begin();
-
-
     }
 
     void CameraBrick::update() {
-        sleep(1000);
+        delay(1000);
     }
 }
