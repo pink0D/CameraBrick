@@ -12,18 +12,15 @@
 
 #include <esp_http_server.h>
 
-namespace camerabrick {
 
-    struct __attribute__((packed)) gamepad_data {
-        double timestamp;
-        float LX;
-        float LY;
-        float RX;
-        float RY;
-        float LT;
-        float RT;
-        uint16_t buttons;      
-    };
+#include <MouldKingino.h>
+#include <ESP32Servo.h>
+
+
+MouldKing40 mk;
+Servo servo;
+
+namespace camerabrick {    
 
     bool WebServer::begin() {
 
@@ -51,6 +48,10 @@ namespace camerabrick {
         }
 
         Serial.println("Web server started");
+
+        mk.connectAsync(); 
+        //servo.attach(12, 1000, 2000);  
+
 
         return true;
     }
@@ -123,11 +124,17 @@ namespace camerabrick {
         }
 
         if (strncmp((const char*)buf,"data", 4) == 0 ) {
-            gamepad_data d;
             memcpy(&d, &buf[5], sizeof(d));
 
-            Serial.printf("%5.2f %5.2f %5.2f %5.2f %5.2f %5.2f", d.LX, d.LY, d.RX, d.RY, d.LT, d.RT);
-            Serial.println();
+            //Serial.printf("%5.2f %5.2f %5.2f %5.2f %5.2f %5.2f", d.LX, d.LY, d.RX, d.RY, d.LT, d.RT);
+            //Serial.println();
+
+            mk.updateMotorOutput(MOTOR_A, WebServer::instance().d.LY);
+
+            mk.applyUpdates();
+
+            //servo.writeMicroseconds(1500 + 500*d.RX);
+
         }
 
         return res;     

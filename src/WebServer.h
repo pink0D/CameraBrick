@@ -16,6 +16,17 @@
 
 namespace camerabrick {
 
+    struct __attribute__((packed)) gamepad_data {
+        double timestamp;
+        float LX;
+        float LY;
+        float RX;
+        float RY;
+        float LT;
+        float RT;
+        uint16_t buttons;      
+    };    
+
     class WebServer {
 
         public:
@@ -25,6 +36,9 @@ namespace camerabrick {
             }
 
             bool begin();
+
+            gamepad_data d;
+
 
         private:
             WebServer() {};
