@@ -10,6 +10,7 @@
 #include "CameraBrick.h"
 #include "WiFiManager.h"
 #include "StreamServer.h"
+#include "WebServer.h"
 
 #include <soc/soc.h>
 #include <soc/rtc_cntl_reg.h>
@@ -40,6 +41,8 @@ namespace camerabrick {
         ESP32Camera::instance().setConfig(cameraConfig);
 
         WiFiManager::instance().begin();
+
+        WebServer::instance().begin();
 
         StreamServer::instance().begin();
     }

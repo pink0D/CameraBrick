@@ -7,39 +7,31 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 //
 
-#ifndef _STREAM_SERVER_H
-#define _STREAM_SERVER_H
+#ifndef _WEB_SERVER_H
+#define _WEB_SERVER_H
 
 #include <Arduino.h>
-
-#include "ESP32Camera.h"
 
 #include <esp_http_server.h>
 
 namespace camerabrick {
 
-    class StreamServer {
+    class WebServer {
 
         public:
-            static StreamServer& instance() {
-                static StreamServer obj;
+            static WebServer& instance() {
+                static WebServer obj;
                 return obj;
             }
 
             bool begin();
 
-            int getFPS() {
-                return fps;
-            };
-
         private:
-            StreamServer() {};
+            WebServer() {};
 
-            httpd_handle_t stream_httpd = nullptr;
+            httpd_handle_t web_httpd = nullptr;
 
-            esp_err_t handler(httpd_req_t *req);
-
-            int fps = 0;
+            esp_err_t websocket_handler(httpd_req_t *req);
 
     };
 }

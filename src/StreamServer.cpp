@@ -33,7 +33,7 @@ namespace camerabrick {
         };  
 
         config.server_port = 8080;
-        config.ctrl_port = 32000;
+        config.ctrl_port = 38080;
 
         Serial.print("Starting stream server on port ");
         Serial.println(config.server_port);
@@ -65,6 +65,12 @@ namespace camerabrick {
             return ESP_FAIL;
         }
 
+        this->fps = 0;
+
+        int fps_count_time = 1;
+        int frames = 0;
+        uint64_t time_reset_frames = esp_timer_get_time() + fps_count_time * 1000000;
+
         while (true) {
 
             ESP32Camera::Frame *frame = ESP32Camera::instance().captureFrame();
@@ -94,6 +100,16 @@ namespace camerabrick {
             }
 
             ESP32Camera::instance().releaseFrame(frame);
+
+            uint64_t time_now = esp_timer_get_time();
+
+            frames++;
+
+            if (time_now > time_reset_frames) {
+                time_reset_frames = time_now + fps_count_time*1000000;
+                this->fps = int( ((float)frames) / ((float)fps_count_time) );
+                frames = 0;
+            }
             
             if (res != ESP_OK) {
                 break;
@@ -101,6 +117,8 @@ namespace camerabrick {
         }
 
         ESP32Camera::instance().stop();
+
+        this->fps = 0;
 
         return res;
     }
