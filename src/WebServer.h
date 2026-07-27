@@ -47,6 +47,8 @@ namespace camerabrick {
 
             esp_err_t websocket_handler(httpd_req_t *req);
 
+            void mk_task();
+
     };
 }
 

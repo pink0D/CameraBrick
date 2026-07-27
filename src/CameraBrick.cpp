@@ -34,9 +34,7 @@ namespace camerabrick {
         }
 
         Serial.begin(115200);
-        //Serial.setDebugOutput(true);
-
-        NimBLEDevice::init("");
+        //Serial.setDebugOutput(true);        
 
         ESP32Camera::instance().setConfig(cameraConfig);
 

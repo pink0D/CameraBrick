@@ -25,6 +25,7 @@ namespace camerabrick {
         WiFi.setHostname(hostname);
         WiFi.begin(ssid, password);
         WiFi.setSleep(false);
+        //WiFi.setTxPower(WIFI_POWER_2dBm);
 
         while (WiFi.status() != WL_CONNECTED) {
             delay(500);

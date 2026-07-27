@@ -15,6 +15,7 @@
 #include "ESP32Camera.h"
 
 #include <esp_http_server.h>
+#include <freertos/semphr.h>
 
 namespace camerabrick {
 
@@ -32,6 +33,9 @@ namespace camerabrick {
                 return fps;
             };
 
+            void lock();
+            void unlock();
+
         private:
             StreamServer() {};
 
@@ -40,6 +44,8 @@ namespace camerabrick {
             esp_err_t handler(httpd_req_t *req);
 
             int fps = 0;
+
+            SemaphoreHandle_t adv_mutex = nullptr;
 
     };
 }

@@ -14,11 +14,13 @@
 
 
 #include <MouldKingino.h>
-#include <ESP32Servo.h>
+//#include <ESP32Servo.h>
+
+#include <esp_coexist.h>
 
 
 MouldKing40 mk;
-Servo servo;
+//Servo servo;
 
 namespace camerabrick {    
 
@@ -43,17 +45,51 @@ namespace camerabrick {
         Serial.print("Starting web server on port ");
         Serial.println(config.server_port);
 
+        
         if (httpd_start(&web_httpd, &config) == ESP_OK) {
             httpd_register_uri_handler(web_httpd, &stream_uri);
         }
+        
 
         Serial.println("Web server started");
 
-        mk.connectAsync(); 
+        //mk.connectAsync(); 
         //servo.attach(12, 1000, 2000);  
 
+        
+
+        
+        NimBLEDevice::init("");
+        NimBLEDevice::setPower(-12, NimBLETxPowerType::Advertise);
+
+        esp_coex_preference_set(ESP_COEX_PREFER_WIFI);
+
+        xTaskCreatePinnedToCore( [](void* ctx) {
+
+            static_cast<WebServer*>(ctx)->mk_task();
+
+        }, "MKTASK", 8*1024, this, 0, NULL, 1);
+        
+        
 
         return true;
+    }
+
+    void WebServer::mk_task() {
+        
+        mk.connect(); 
+
+        while (1) {
+
+            StreamServer::instance().lock();
+
+            mk.updateMotorOutput(MOTOR_A, 1.0);
+            mk.applyUpdates(40);
+
+            StreamServer::instance().unlock();
+
+            vTaskDelay(pdMS_TO_TICKS(100));
+        }
     }
 
     esp_err_t WebServer::websocket_handler(httpd_req_t *req) {
@@ -129,9 +165,9 @@ namespace camerabrick {
             //Serial.printf("%5.2f %5.2f %5.2f %5.2f %5.2f %5.2f", d.LX, d.LY, d.RX, d.RY, d.LT, d.RT);
             //Serial.println();
 
-            mk.updateMotorOutput(MOTOR_A, WebServer::instance().d.LY);
+            //mk.updateMotorOutput(MOTOR_A, WebServer::instance().d.LY);
 
-            mk.applyUpdates();
+            //mk.applyUpdates();
 
             //servo.writeMicroseconds(1500 + 500*d.RX);
 
