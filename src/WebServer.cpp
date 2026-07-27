@@ -77,8 +77,6 @@ namespace camerabrick {
 
     void WebServer::mk_task() {
         
-        //mk.setBLEAdvertisementInterval(64);
-        mk.forceBLEAdvertisementRestart(true);
         mk.connect(); 
 
         while (1) {
@@ -86,7 +84,7 @@ namespace camerabrick {
             StreamServer::instance().lock();
 
             mk.updateMotorOutput(MOTOR_A, d.LY);
-            mk.applyUpdates(40);
+            mk.applyUpdates(40, true);
 
             StreamServer::instance().unlock();
 
