@@ -77,18 +77,20 @@ namespace camerabrick {
 
     void WebServer::mk_task() {
         
+        //mk.setBLEAdvertisementInterval(64);
+        mk.forceBLEAdvertisementRestart(true);
         mk.connect(); 
 
         while (1) {
 
             StreamServer::instance().lock();
 
-            mk.updateMotorOutput(MOTOR_A, 1.0);
+            mk.updateMotorOutput(MOTOR_A, d.LY);
             mk.applyUpdates(40);
 
             StreamServer::instance().unlock();
 
-            vTaskDelay(pdMS_TO_TICKS(100));
+            vTaskDelay(pdMS_TO_TICKS(40));
         }
     }
 
