@@ -27,6 +27,12 @@ namespace camerabrick {
         uint16_t buttons;      
     };    
 
+    struct file_data {
+        size_t content_size;
+        size_t content_type;
+        const char* content;
+    };
+
     class WebServer {
 
         public:
@@ -46,6 +52,8 @@ namespace camerabrick {
             httpd_handle_t web_httpd = nullptr;
 
             esp_err_t websocket_handler(httpd_req_t *req);
+            esp_err_t config_handler(httpd_req_t *req);
+            esp_err_t file_handler(httpd_req_t *req);
 
             void mk_task();
 

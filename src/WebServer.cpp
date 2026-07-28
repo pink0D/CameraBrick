@@ -18,6 +18,8 @@
 
 #include <esp_coexist.h>
 
+#include "../extras/app_camera_files.h"
+
 
 MouldKing40 mk;
 //Servo servo;
@@ -28,6 +30,7 @@ namespace camerabrick {
 
         httpd_config_t config = HTTPD_DEFAULT_CONFIG();
         config.max_uri_handlers = 16;
+        config.uri_match_fn = httpd_uri_match_wildcard;
 
         httpd_uri_t stream_uri = {
             .uri = "/ws",
@@ -39,6 +42,24 @@ namespace camerabrick {
             .is_websocket = true
         };  
 
+        httpd_uri_t config_uri = {
+            .uri = "/config",
+            .method = HTTP_GET,
+            .handler = [](httpd_req_t *req) -> esp_err_t {
+                return static_cast<WebServer*>(req->user_ctx)->config_handler(req);
+            },
+            .user_ctx = this,
+        };  
+
+        httpd_uri_t camera_app_uri = {
+            .uri = "/*",
+            .method = HTTP_GET,
+            .handler = [](httpd_req_t *req) -> esp_err_t {
+                return static_cast<WebServer*>(req->user_ctx)->file_handler(req);
+            },
+            .user_ctx = this,
+        };  
+
         config.server_port = 80;
         config.ctrl_port = 30080;
 
@@ -48,6 +69,8 @@ namespace camerabrick {
         
         if (httpd_start(&web_httpd, &config) == ESP_OK) {
             httpd_register_uri_handler(web_httpd, &stream_uri);
+            httpd_register_uri_handler(web_httpd, &config_uri);
+            httpd_register_uri_handler(web_httpd, &camera_app_uri);
         }
         
 
@@ -174,6 +197,47 @@ namespace camerabrick {
         }
 
         return res;     
+    }
+
+    esp_err_t WebServer::config_handler(httpd_req_t *req) {
+
+        httpd_resp_set_type(req, "application/json");
+
+        const char* json = R"(
+            {
+                "stream_url": "http://fpvbrick.local:8080/stream",
+                "settings_url": "http://fpvbrick.local/settings",
+                "websocket_url": "ws://fpvbrick.local/ws",
+                "gamepad_enabled": true,
+                "fullscreen_enabled": true
+            }        
+        )";
+
+        httpd_resp_sendstr(req, json);
+
+        return ESP_OK;
+    }
+
+    esp_err_t WebServer::file_handler(httpd_req_t *req) {
+
+        for (int i=0; i<app_camera_files_count; i++) {
+
+            if (strcmp(req->uri, app_camera_files[i].file_name) == 0) {
+
+                httpd_resp_set_type(req, app_camera_files[i].content_type);
+
+                if (app_camera_files[i].content_encoding != nullptr)
+                    httpd_resp_set_hdr(req, "Content-Encoding", app_camera_files[i].content_encoding);
+
+                httpd_resp_send_chunk(req, (const char*)app_camera_files[i].content, app_camera_files[i].content_size);
+                httpd_resp_send_chunk(req, nullptr, 0);
+
+                return ESP_OK;
+            }
+        }            
+
+        httpd_resp_send_404(req);
+        return ESP_FAIL;
     }
     
 }
