@@ -14,19 +14,13 @@
 
 #include <esp_camera.h>
 
-namespace camerabrick {
+namespace camerabrick::comp {
 
     class ESP32Camera {
 
-        protected:
+        public:
             ESP32Camera() {};
         
-        public:
-            static ESP32Camera& instance() {
-                static ESP32Camera obj;
-                return obj;
-            }
-
         public:
 
             struct Config {
@@ -71,8 +65,12 @@ namespace camerabrick {
             uint8_t *jpg_buf = nullptr;
 
             Config config;
+            Frame frame;
     };
 }
 
+namespace camerabrick {
+    extern comp::ESP32Camera ESP32Camera;  
+}
 
 #endif

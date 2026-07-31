@@ -22,7 +22,11 @@
 #include "ESP32Camera.h"
 #include "ESP32CameraConfig.h"
 
-namespace camerabrick {
+#include "ConfigComponent.h"
+
+#include <map>
+
+namespace camerabrick::comp {
 
     class CameraBrick {
 
@@ -32,10 +36,16 @@ namespace camerabrick {
             void begin(ESP32Camera::Config cameraConfig);
             void update();
 
+            void registerConfigComponent(std::string name, ConfigComponent* component);
+            ConfigComponent* getConfigComponent(std::string name);
+
         private:
+
+            std::map<std::string, ConfigComponent*> configComponents;
+
     };
 }
 
-extern camerabrick::CameraBrick CameraBrick;  
+extern camerabrick::comp::CameraBrick CameraBrick;  
 
 #endif

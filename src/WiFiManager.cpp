@@ -18,7 +18,12 @@ const char *ssid = WIFI_SSID;
 const char *password = WIFI_PASSWORD;
 const char *hostname = "fpvbrick";
 
+//global instance
 namespace camerabrick {
+    camerabrick::comp::WiFiManager WiFiManager;  
+}
+
+namespace camerabrick::comp {
 
     bool WiFiManager::begin() {
 

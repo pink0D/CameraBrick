@@ -18,9 +18,9 @@
 
 
 //global instance
-camerabrick::CameraBrick CameraBrick;  
+camerabrick::comp::CameraBrick CameraBrick;  
 
-namespace camerabrick {
+namespace camerabrick::comp {
 
     void CameraBrick::begin(ESP32Camera::Config cameraConfig) {
 
@@ -36,16 +36,30 @@ namespace camerabrick {
         Serial.begin(115200);
         //Serial.setDebugOutput(true);        
 
-        ESP32Camera::instance().setConfig(cameraConfig);
+        ::camerabrick::ESP32Camera.setConfig(cameraConfig);
 
-        WiFiManager::instance().begin();
+        ::camerabrick::WiFiManager.begin();
 
-        WebServer::instance().begin();
+        ::camerabrick::WebServer.begin();
 
-        StreamServer::instance().begin();
+        ::camerabrick::StreamServer.begin();
     }
 
     void CameraBrick::update() {
         delay(1000);
     }
+
+    void CameraBrick::registerConfigComponent(std::string name, ConfigComponent* component) {
+        
+        configComponents[name] = component;
+    }
+
+    ConfigComponent* CameraBrick::getConfigComponent(std::string name) {
+
+        if (configComponents.count(name) > 0)
+            return configComponents.at(name);
+
+        return nullptr;
+    }
+
 }

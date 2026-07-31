@@ -12,7 +12,12 @@
 
 #include <img_converters.h>
 
+//global instance
 namespace camerabrick {
+    camerabrick::comp::ESP32Camera ESP32Camera;  
+}
+
+namespace camerabrick::comp {
         
     bool ESP32Camera::begin()
     {
@@ -100,19 +105,19 @@ namespace camerabrick {
             jpg_buf = fb->buf;
         }
         
-        Frame *frame = new Frame();
+        //Frame *frame = new Frame();
         
-        frame->timestamp = fb->timestamp;
-        frame->jpegBuffer = jpg_buf;
-        frame->jpegBufferLength = jpg_buf_len;
+        this->frame.timestamp = fb->timestamp;
+        this->frame.jpegBuffer = jpg_buf;
+        this->frame.jpegBufferLength = jpg_buf_len;
 
-        return frame;
+        return &frame;
     }
 
     void ESP32Camera::releaseFrame(ESP32Camera::Frame *frame)
     {
-        if (frame != nullptr)
-            delete frame;
+        //if (frame != nullptr)
+        //    delete frame;
 
         if (fb) {
             esp_camera_fb_return(fb);

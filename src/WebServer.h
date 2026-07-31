@@ -14,7 +14,7 @@
 
 #include <esp_http_server.h>
 
-namespace camerabrick {
+namespace camerabrick::comp {
 
     struct __attribute__((packed)) gamepad_data {
         double timestamp;
@@ -27,37 +27,31 @@ namespace camerabrick {
         uint16_t buttons;      
     };    
 
-    struct file_data {
-        size_t content_size;
-        size_t content_type;
-        const char* content;
-    };
-
     class WebServer {
 
         public:
-            static WebServer& instance() {
-                static WebServer obj;
-                return obj;
-            }
+            WebServer() {};
 
             bool begin();
 
             gamepad_data d;
 
 
-        private:
-            WebServer() {};
+        private:            
 
             httpd_handle_t web_httpd = nullptr;
 
             esp_err_t websocket_handler(httpd_req_t *req);
-            esp_err_t config_handler(httpd_req_t *req);
             esp_err_t file_handler(httpd_req_t *req);
-
-            void mk_task();
+            esp_err_t root_config_handler(httpd_req_t *req);
+            esp_err_t component_config_handler_get(httpd_req_t *req);
+            esp_err_t component_config_handler_post(httpd_req_t *req);
 
     };
+}
+
+namespace camerabrick {
+    extern comp::WebServer WebServer;  
 }
 
 

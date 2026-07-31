@@ -12,22 +12,20 @@
 
 #include <Arduino.h>
 
-namespace camerabrick {
+namespace camerabrick::comp {
 
     class WiFiManager {
 
         public:
-            static WiFiManager& instance() {
-                static WiFiManager obj;
-                return obj;
-            }
-
-            bool begin();
-
-        private:
             WiFiManager() {};
 
+            bool begin();            
+
     };
+}
+
+namespace camerabrick {
+    extern comp::WiFiManager WiFiManager;  
 }
 
 

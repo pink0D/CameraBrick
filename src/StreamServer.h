@@ -17,15 +17,12 @@
 #include <esp_http_server.h>
 #include <freertos/semphr.h>
 
-namespace camerabrick {
+namespace camerabrick::comp {
 
     class StreamServer {
 
         public:
-            static StreamServer& instance() {
-                static StreamServer obj;
-                return obj;
-            }
+            StreamServer() {};
 
             bool begin();
 
@@ -33,22 +30,20 @@ namespace camerabrick {
                 return fps;
             };
 
-            void lock();
-            void unlock();
 
         private:
-            StreamServer() {};
-
+            
             httpd_handle_t stream_httpd = nullptr;
 
             esp_err_t handler(httpd_req_t *req);
 
             int fps = 0;
 
-            SemaphoreHandle_t adv_mutex = nullptr;
-
     };
 }
 
+namespace camerabrick {
+    extern comp::StreamServer StreamServer;  
+}
 
 #endif

@@ -8,18 +8,27 @@
 //
 
 #include "StreamServer.h"
+#include "WebServer.h"
 
 #include <esp_http_server.h>
 
-//#include <MouldKingino.h>
-//MouldKing40 mk;
+#include <MouldKingino.h>
+
+#include <esp_coexist.h>
+
+MouldKing40 mk;
 
 #define PART_BOUNDARY "CameraFrameBoundary"
 static const char *_STREAM_CONTENT_TYPE = "multipart/x-mixed-replace;boundary=" PART_BOUNDARY;
 static const char *_STREAM_BOUNDARY = "\r\n--" PART_BOUNDARY "\r\n";
 static const char *_STREAM_PART = "Content-Type: image/jpeg\r\nContent-Length: %u\r\nX-Timestamp: %d.%06d\r\n\r\n";
 
+//global instance
 namespace camerabrick {
+    camerabrick::comp::StreamServer StreamServer;  
+}
+
+namespace camerabrick::comp {
 
     bool StreamServer::begin() {
 
@@ -47,14 +56,14 @@ namespace camerabrick {
 
         Serial.println("Stream server started");
 
-        adv_mutex = xSemaphoreCreateMutex();
-
-        /*
+       
         NimBLEDevice::init("");
         NimBLEDevice::setPower(-12, NimBLETxPowerType::Advertise);
 
+        esp_coex_preference_set(ESP_COEX_PREFER_WIFI);
+
         mk.connectAsync(); 
-        */
+        
 
         return true;
     }
@@ -73,7 +82,7 @@ namespace camerabrick {
         httpd_resp_set_hdr(req, "Cache-Control", "no-store");
         httpd_resp_set_hdr(req, "X-Framerate", "60");
 
-        if (!ESP32Camera::instance().begin()) {
+        if (!::camerabrick::ESP32Camera.begin()) {
             Serial.println("Camera init failed");
             return ESP_FAIL;
         }
@@ -83,18 +92,18 @@ namespace camerabrick {
         int fps_count_time = 1;
         int frames = 0;
         uint64_t time_reset_frames = esp_timer_get_time() + fps_count_time * 1000000;
-        uint64_t time_delay_wifi = 0;
+        uint64_t time_delay_update = 0;
 
         while (true) {
 
-            ESP32Camera::Frame *frame = ESP32Camera::instance().captureFrame();
+            ESP32Camera::Frame *frame = ::camerabrick::ESP32Camera.captureFrame();
 
             if (frame == nullptr) {
                 Serial.println("Camera capture failed");
                 res = ESP_FAIL;
             }
                 
-            lock();
+            //lock();
 
             /*while (time_delay_wifi > esp_timer_get_time()) {
                 vTaskDelay(1);
@@ -119,9 +128,20 @@ namespace camerabrick {
                 res = httpd_resp_send_chunk(req, (const char *)frame->jpegBuffer, frame->jpegBufferLength);
             }
 
-            unlock();
+            ::camerabrick::ESP32Camera.releaseFrame(frame);
 
             uint64_t time_now = esp_timer_get_time();
+
+            if (time_now > time_delay_update) {
+                mk.updateMotorOutput(MOTOR_A, ::camerabrick::WebServer.d.LY);
+                mk.applyUpdates(30, true);
+
+                time_delay_update = time_now + 40000;
+            }
+
+            //unlock();
+
+
 
             frames++;
 
@@ -134,31 +154,18 @@ namespace camerabrick {
             //mk.updateMotorOutput(MOTOR_A, 1.0);
             //mk.applyUpdates(40);
 
-            //time_delay_wifi = time_now + 40000;
-
-            
-            ESP32Camera::instance().releaseFrame(frame);
-
+            //time_delay_wifi = time_now + 40000;        
             
             if (res != ESP_OK) {
                 break;
             }
         }
 
-        ESP32Camera::instance().stop();
+        ::camerabrick::ESP32Camera.stop();
 
         this->fps = 0;
 
         return res;
-    }
-    
-
-    void StreamServer::lock() {
-        xSemaphoreTake(adv_mutex, portMAX_DELAY);
-    }
-
-    void StreamServer::unlock() {
-        xSemaphoreGive(adv_mutex);
     }
 
 }
