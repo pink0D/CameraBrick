@@ -12,11 +12,8 @@
 
 #include <esp_http_server.h>
 
-#include <MouldKingino.h>
-
-#include <esp_coexist.h>
-
-MouldKing40 mk;
+#include "CameraBrick.h"
+#include "Gamepad.h"
 
 #define PART_BOUNDARY "CameraFrameBoundary"
 static const char *_STREAM_CONTENT_TYPE = "multipart/x-mixed-replace;boundary=" PART_BOUNDARY;
@@ -54,27 +51,26 @@ namespace camerabrick::comp {
             httpd_register_uri_handler(stream_httpd, &stream_uri);
         }
 
-        Serial.println("Stream server started");
-
-       
-        NimBLEDevice::init("");
-        NimBLEDevice::setPower(-12, NimBLETxPowerType::Advertise);
-
-        esp_coex_preference_set(ESP_COEX_PREFER_WIFI);
-
-        mk.connectAsync(); 
-        
+        Serial.println("Stream server started");       
 
         return true;
     }
 
     esp_err_t StreamServer::handler(httpd_req_t *req) {
 
+        // only one active stream due to performance limitations of ESP32 Camera
+        if (streamActive) {
+            return ESP_FAIL;
+        }
+
+        streamActive = true;
+
         esp_err_t res = ESP_OK;
         char *part_buf[128];
 
         res = httpd_resp_set_type(req, _STREAM_CONTENT_TYPE);
         if (res != ESP_OK) {
+            streamActive = false;
             return res;
         }
 
@@ -84,15 +80,16 @@ namespace camerabrick::comp {
 
         if (!::camerabrick::ESP32Camera.begin()) {
             Serial.println("Camera init failed");
+            streamActive = false;
             return ESP_FAIL;
         }
 
         this->fps = 0;
 
-        int fps_count_time = 1;
+        int fps_count_time = 1; // refresh fps every 1 secons
         int frames = 0;
-        uint64_t time_reset_frames = esp_timer_get_time() + fps_count_time * 1000000;
-        uint64_t time_delay_update = 0;
+        int64_t time_reset_frames = esp_timer_get_time() + fps_count_time * 1000000;
+        int64_t time_delay_update = 0;
 
         while (true) {
 
@@ -101,13 +98,7 @@ namespace camerabrick::comp {
             if (frame == nullptr) {
                 Serial.println("Camera capture failed");
                 res = ESP_FAIL;
-            }
-                
-            //lock();
-
-            /*while (time_delay_wifi > esp_timer_get_time()) {
-                vTaskDelay(1);
-            }*/
+            }                          
 
             if (res == ESP_OK) {
                 res = httpd_resp_send_chunk(req, _STREAM_BOUNDARY, strlen(_STREAM_BOUNDARY));
@@ -130,17 +121,17 @@ namespace camerabrick::comp {
 
             ::camerabrick::ESP32Camera.releaseFrame(frame);
 
-            uint64_t time_now = esp_timer_get_time();
+            int64_t time_now = esp_timer_get_time();
 
-            if (time_now > time_delay_update) {
-                mk.updateMotorOutput(MOTOR_A, ::camerabrick::WebServer.d.LY);
-                mk.applyUpdates(30, true);
+            if (::CameraBrick.getProfile()->syncWithCamera) {
 
-                time_delay_update = time_now + 40000;
+                if (time_now > time_delay_update) {
+
+                    ::CameraBrick.getProfile()->processGamepad(::camerabrick::Gamepad.getState());
+
+                    time_delay_update = time_now + 40000;
+                }
             }
-
-            //unlock();
-
 
 
             frames++;
@@ -150,11 +141,6 @@ namespace camerabrick::comp {
                 this->fps = int( ((float)frames) / ((float)fps_count_time) );
                 frames = 0;
             }
-
-            //mk.updateMotorOutput(MOTOR_A, 1.0);
-            //mk.applyUpdates(40);
-
-            //time_delay_wifi = time_now + 40000;        
             
             if (res != ESP_OK) {
                 break;
@@ -164,6 +150,7 @@ namespace camerabrick::comp {
         ::camerabrick::ESP32Camera.stop();
 
         this->fps = 0;
+        streamActive = false;
 
         return res;
     }

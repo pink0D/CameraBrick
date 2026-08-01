@@ -39,6 +39,8 @@ namespace camerabrick::comp {
 
             int fps = 0;
 
+            bool streamActive = false;
+
     };
 }
 

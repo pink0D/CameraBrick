@@ -23,8 +23,26 @@
 #include "ESP32CameraConfig.h"
 
 #include "ConfigComponent.h"
+#include "Gamepad.h"
 
 #include <map>
+
+namespace camerabrick {
+
+    class Profile {
+
+        public:
+            Profile();
+
+            // used for Bluetooth & Wifi radio sync
+            // BLE advertisement packets are sent after each MJPEG frame transmission over WiFi completes
+            bool syncWithCamera = false;
+
+            virtual void setup() {};
+            virtual void processGamepad(const GamepadState &gamepad) {};
+            virtual void failsafe() {};
+    };
+}
 
 namespace camerabrick::comp {
 
@@ -32,6 +50,11 @@ namespace camerabrick::comp {
 
         public:
             CameraBrick() {};
+
+            void setProfile(Profile *profile);
+            Profile* getProfile() {
+                return profile;
+            };
 
             void begin(ESP32Camera::Config cameraConfig);
             void update();
@@ -42,6 +65,7 @@ namespace camerabrick::comp {
         private:
 
             std::map<std::string, ConfigComponent*> configComponents;
+            camerabrick::Profile *profile = nullptr;
 
     };
 }

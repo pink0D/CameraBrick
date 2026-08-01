@@ -20,7 +20,25 @@
 //global instance
 camerabrick::comp::CameraBrick CameraBrick;  
 
+namespace camerabrick {
+
+    Profile::Profile() {
+        ::CameraBrick.setProfile(this);
+    }
+}
+
 namespace camerabrick::comp {
+
+    void CameraBrick::setProfile(camerabrick::Profile *profile) {
+
+        if (this->profile != nullptr) {
+            Serial.println("WARNING: profile was already set");
+        }
+        if (profile != nullptr) {
+            this->profile = profile;
+            Serial.println("CameraBrick profile updated");
+        }
+    }
 
     void CameraBrick::begin(ESP32Camera::Config cameraConfig) {
 
@@ -34,7 +52,12 @@ namespace camerabrick::comp {
         }
 
         Serial.begin(115200);
-        //Serial.setDebugOutput(true);        
+        //Serial.setDebugOutput(true);   
+        
+        if (profile == nullptr) {
+            Serial.println("WARNING: Profile was not set");
+            profile = new Profile();
+        }
 
         ::camerabrick::ESP32Camera.setConfig(cameraConfig);
 
@@ -43,6 +66,8 @@ namespace camerabrick::comp {
         ::camerabrick::WebServer.begin();
 
         ::camerabrick::StreamServer.begin();
+
+        ::camerabrick::Gamepad.begin();
     }
 
     void CameraBrick::update() {
@@ -50,7 +75,7 @@ namespace camerabrick::comp {
     }
 
     void CameraBrick::registerConfigComponent(std::string name, ConfigComponent* component) {
-        
+
         configComponents[name] = component;
     }
 

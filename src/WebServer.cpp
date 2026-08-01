@@ -14,6 +14,7 @@
 
 #include "ConfigComponent.h"
 #include "CameraBrick.h"
+#include "Gamepad.h"
 
 
 
@@ -100,25 +101,6 @@ namespace camerabrick::comp {
 
         Serial.println("Web server started");
 
-        //mk.connectAsync(); 
-        //servo.attach(12, 1000, 2000);  
-
-        
-
-        /*
-        NimBLEDevice::init("");
-        NimBLEDevice::setPower(-12, NimBLETxPowerType::Advertise);
-
-        esp_coex_preference_set(ESP_COEX_PREFER_WIFI);
-
-        xTaskCreatePinnedToCore( [](void* ctx) {
-
-            static_cast<WebServer*>(ctx)->mk_task();
-
-        }, "MKTASK", 8*1024, this, 0, NULL, 1);
-        */
-        
-
         return true;
     }
 
@@ -190,17 +172,14 @@ namespace camerabrick::comp {
         }
 
         if (strncmp((const char*)buf,"data", 4) == 0 ) {
+
+            gamepad_raw_data d;
             memcpy(&d, &buf[5], sizeof(d));
+
+            ::camerabrick::Gamepad.updateData(d);
 
             //Serial.printf("%5.2f %5.2f %5.2f %5.2f %5.2f %5.2f", d.LX, d.LY, d.RX, d.RY, d.LT, d.RT);
             //Serial.println();
-
-            //mk.updateMotorOutput(MOTOR_A, WebServer::instance().d.LY);
-
-            //mk.applyUpdates();
-
-            //servo.writeMicroseconds(1500 + 500*d.RX);
-
         }
 
         return res;     
