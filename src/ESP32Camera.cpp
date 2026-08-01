@@ -23,6 +23,7 @@ namespace camerabrick {
                 addMap(ESP32CameraType::ESP32CAM_OV2640, "ESP32CAM OV2640");
                 addMap(ESP32CameraType::M5STACK_ATOM_S3R_M12_OV3660, "M5Stack AtomS3R-M12 OV3660");
                 addMap(ESP32CameraType::M5STACK_ATOM_S3R_GC0308, "M5Stack AtomS3R-CAM GC0308");
+                addMap(ESP32CameraType::M5STACK_TIMER_CAMERA_OV3660, "M5Stack Timer Camera OV3660");
 
                 setDefaultEnum(ESP32CameraType::ESP32CAM_OV2640);
                 setDefaultString("");
@@ -65,6 +66,10 @@ namespace camerabrick::comp {
 
             case ESP32CameraType::M5STACK_ATOM_S3R_GC0308:
                 config = camerabrick::config::M5STACK_ATOM_S3R_GC0308();
+                break;
+
+            case ESP32CameraType::M5STACK_TIMER_CAMERA_OV3660:
+                config = camerabrick::config::M5STACK_TIMER_CAMERA_OV3660();
                 break;
         }
 

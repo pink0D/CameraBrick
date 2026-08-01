@@ -45,7 +45,7 @@ class : public camerabrick::Profile {
     virtual void failsafe() {
 
         mk.updateMotorOutput(MOTOR_A, 0);
-        mk.applyUpdates(100);
+        mk.applyUpdates(30, true);
     }
 
 
