@@ -59,19 +59,24 @@ namespace camerabrick::comp {
             profile = new Profile();
         }
 
+        //Serial.println("1");
         ::camerabrick::ESP32Camera.setConfig(cameraConfig);
 
+        //Serial.println("2");
         ::camerabrick::WiFiManager.begin();
 
+        //Serial.println("3");
         ::camerabrick::WebServer.begin();
 
+        //Serial.println("4");
         ::camerabrick::StreamServer.begin();
 
+        //Serial.println("5");
         ::camerabrick::Gamepad.begin();
-    }
 
-    void CameraBrick::update() {
-        delay(1000);
+        //Serial.println("6");
+        profile->setup();
+        //Serial.println("7");
     }
 
     void CameraBrick::registerConfigComponent(std::string name, ConfigComponent* component) {
@@ -87,4 +92,54 @@ namespace camerabrick::comp {
         return nullptr;
     }
 
+    void CameraBrick::cameraSync() {
+
+        // process gamepad after camera frame was sent over WiFi                
+        if (profile->syncWithCamera)
+        {                       
+            static int64_t time_delay_update = 0;
+
+            int64_t time_now = esp_timer_get_time();
+
+            // limit max updates per seconds if camera FPS gets too high to reduce WiFi/Bluetooth radio switches
+            if (time_now > time_delay_update) {
+
+                processGamepad();
+
+                time_delay_update = time_now + profile->updateDelayMillis*1000;
+                lastCameraSync = time_now;
+            }
+        }
+    }
+
+    void CameraBrick::update() {
+
+
+        // go to failsafe mode if camera framerate is low
+        if (esp_timer_get_time() > lastCameraSync + profile->cameraTimeoutMillis * 1000) {
+            profile->failsafe();
+        } 
+        else if ((profile->syncWithCamera == false) /*|| (::camerabrick::StreamServer.isActive() == false)*/ ) {
+            // process gamepad here if no sync with camera required or camera stream is not active
+
+            processGamepad();    
+        } 
+        
+        vTaskDelay(pdMS_TO_TICKS(profile->updateDelayMillis));
+    }
+
+    void CameraBrick::processGamepad() {
+
+        auto state = ::camerabrick::Gamepad.getState();
+
+        int64_t time_now = esp_timer_get_time();
+        int64_t gamepadTimeout = state.getTimestamp() + profile->gamepadTimeoutMillis*1000;
+
+        // check if gamepad data was received recently
+        if (time_now < gamepadTimeout) {
+            profile->processGamepad(state);
+        } else {
+            profile->failsafe();
+        }
+    }
 }

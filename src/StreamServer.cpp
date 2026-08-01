@@ -8,12 +8,11 @@
 //
 
 #include "StreamServer.h"
-#include "WebServer.h"
 
 #include <esp_http_server.h>
 
 #include "CameraBrick.h"
-#include "Gamepad.h"
+#include "ESP32Camera.h"
 
 #define PART_BOUNDARY "CameraFrameBoundary"
 static const char *_STREAM_CONTENT_TYPE = "multipart/x-mixed-replace;boundary=" PART_BOUNDARY;
@@ -63,14 +62,14 @@ namespace camerabrick::comp {
             return ESP_FAIL;
         }
 
-        streamActive = true;
+        this->streamActive = true;
 
         esp_err_t res = ESP_OK;
         char *part_buf[128];
 
         res = httpd_resp_set_type(req, _STREAM_CONTENT_TYPE);
         if (res != ESP_OK) {
-            streamActive = false;
+            this->streamActive = false;
             return res;
         }
 
@@ -80,16 +79,15 @@ namespace camerabrick::comp {
 
         if (!::camerabrick::ESP32Camera.begin()) {
             Serial.println("Camera init failed");
-            streamActive = false;
+            this->streamActive = false;
             return ESP_FAIL;
         }
 
         this->fps = 0;
 
         int fps_count_time = 1; // refresh fps every 1 secons
-        int frames = 0;
-        int64_t time_reset_frames = esp_timer_get_time() + fps_count_time * 1000000;
-        int64_t time_delay_update = 0;
+        int frame_count = 0;
+        int64_t time_reset_frame_count = esp_timer_get_time() + fps_count_time * 1000000;
 
         while (true) {
 
@@ -121,25 +119,16 @@ namespace camerabrick::comp {
 
             ::camerabrick::ESP32Camera.releaseFrame(frame);
 
+            ::CameraBrick.cameraSync(); // call processing inside CameraBrick after the frame has been sent over WiFi           
+
             int64_t time_now = esp_timer_get_time();
 
-            if (::CameraBrick.getProfile()->syncWithCamera) {
+            frame_count++;
 
-                if (time_now > time_delay_update) {
-
-                    ::CameraBrick.getProfile()->processGamepad(::camerabrick::Gamepad.getState());
-
-                    time_delay_update = time_now + 40000;
-                }
-            }
-
-
-            frames++;
-
-            if (time_now > time_reset_frames) {
-                time_reset_frames = time_now + fps_count_time*1000000;
-                this->fps = int( ((float)frames) / ((float)fps_count_time) );
-                frames = 0;
+            if (time_now > time_reset_frame_count) {
+                time_reset_frame_count = time_now + fps_count_time*1000000;
+                this->fps = int( ((float)frame_count) / ((float)fps_count_time) );
+                frame_count = 0;
             }
             
             if (res != ESP_OK) {
@@ -150,7 +139,7 @@ namespace camerabrick::comp {
         ::camerabrick::ESP32Camera.stop();
 
         this->fps = 0;
-        streamActive = false;
+        this->streamActive = false;
 
         return res;
     }

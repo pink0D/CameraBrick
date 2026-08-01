@@ -27,7 +27,7 @@ class : public camerabrick::Profile {
     }
 
     void processGamepad(const camerabrick::GamepadState &gamepad) {
-        
+
         mk.updateMotorOutput(MOTOR_A, gamepad.leftY() );
         mk.applyUpdates(30, true);
     }
@@ -35,7 +35,7 @@ class : public camerabrick::Profile {
     virtual void failsafe() {
 
         mk.updateMotorOutput(MOTOR_A, 0);
-        mk.applyUpdates(250);
+        mk.applyUpdates(100);
     }
 
 

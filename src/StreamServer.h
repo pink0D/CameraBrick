@@ -12,10 +12,7 @@
 
 #include <Arduino.h>
 
-#include "ESP32Camera.h"
-
 #include <esp_http_server.h>
-#include <freertos/semphr.h>
 
 namespace camerabrick::comp {
 
@@ -30,6 +27,9 @@ namespace camerabrick::comp {
                 return fps;
             };
 
+            bool isActive() {
+                return streamActive;
+            };
 
         private:
             

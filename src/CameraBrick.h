@@ -38,6 +38,15 @@ namespace camerabrick {
             // BLE advertisement packets are sent after each MJPEG frame transmission over WiFi completes
             bool syncWithCamera = false;
 
+            // minimum interval between controller state updates            
+            int updateDelayMillis = 40;
+
+            // max timeout before controller goes to failsafe mode if no gamepad data is received 
+            int gamepadTimeoutMillis = 100;
+
+            // max timeout before controller goes to failsafe mode if no camera frames are captured
+            int cameraTimeoutMillis = 200;
+
             virtual void setup() {};
             virtual void processGamepad(const GamepadState &gamepad) {};
             virtual void failsafe() {};
@@ -62,11 +71,16 @@ namespace camerabrick::comp {
             void registerConfigComponent(std::string name, ConfigComponent* component);
             ConfigComponent* getConfigComponent(std::string name);
 
+            void cameraSync();
+
         private:
 
             std::map<std::string, ConfigComponent*> configComponents;
             camerabrick::Profile *profile = nullptr;
 
+            int64_t lastCameraSync = 0;
+
+            void processGamepad();
     };
 }
 

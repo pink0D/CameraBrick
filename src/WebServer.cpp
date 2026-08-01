@@ -8,21 +8,15 @@
 //
 
 #include "WebServer.h"
-#include "StreamServer.h"
 
 #include <esp_http_server.h>
 
+#include "StreamServer.h"
 #include "ConfigComponent.h"
 #include "CameraBrick.h"
 #include "Gamepad.h"
 
-
-
 #include "../extras/app_camera_files.h"
-
-
-//MouldKing40 mk;
-//Servo servo;
 
 //global instance
 namespace camerabrick {

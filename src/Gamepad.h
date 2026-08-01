@@ -31,19 +31,19 @@ namespace camerabrick {
         public:
             GamepadState() {};
 
-            GamepadState(gamepad_raw_data &rawData, int64_t timeUpdate) {
+            GamepadState(gamepad_raw_data &rawData, int64_t timestamp) {
                 this->data = rawData;
-                this->timeUpdate = timeUpdate;
+                this->timestamp = timestamp;
             };
 
             GamepadState(const GamepadState& s) {
                 this->data = s.data;
-                this->timeUpdate = s.timeUpdate;
+                this->timestamp = s.timestamp;
             };
 
             GamepadState& operator=(const GamepadState &s) {
                 this->data = s.data;
-                this->timeUpdate = s.timeUpdate;
+                this->timestamp = s.timestamp;
                 return *this;
             };
 
@@ -54,9 +54,11 @@ namespace camerabrick {
             float leftTrigger() const { return data.LT; };
             float rightTrigger() const { return data.RT; };
 
+            int64_t getTimestamp() const { return timestamp; };
+
         private:
             gamepad_raw_data data;
-            int64_t timeUpdate = 0;
+            int64_t timestamp = 0;
                     
     };
 }
