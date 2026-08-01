@@ -16,11 +16,13 @@
 
 #define DECLARE_CAMERA_CONFIG(__name__)                   \
     struct __name__ : camerabrick::comp::ESP32Camera::Config {  \
-        __name__(framesize_t _frame_size);                \
+        __name__();                \
     };
 
-DECLARE_CAMERA_CONFIG(ESP32CAM_OV2640)
-DECLARE_CAMERA_CONFIG(M5STACK_ATOM_S3R_M12_OV3660)
-DECLARE_CAMERA_CONFIG(M5STACK_ATOM_S3R_GC0308)
+namespace camerabrick::config {
+    DECLARE_CAMERA_CONFIG(ESP32CAM_OV2640)
+    DECLARE_CAMERA_CONFIG(M5STACK_ATOM_S3R_M12_OV3660)
+    DECLARE_CAMERA_CONFIG(M5STACK_ATOM_S3R_GC0308)
+}
 
 #endif

@@ -15,17 +15,15 @@
 #endif
 
 #include <Arduino.h>
+#include <map>
 
 #include <NimBLEDevice.h>
 #include <MouldKingino.h>
 
 #include "ESP32Camera.h"
-#include "ESP32CameraConfig.h"
-
 #include "ConfigComponent.h"
 #include "Gamepad.h"
 
-#include <map>
 
 namespace camerabrick {
 
@@ -33,6 +31,8 @@ namespace camerabrick {
 
         public:
             Profile();
+
+            ESP32CameraType cameraType;
 
             // used for Bluetooth & Wifi radio sync
             // BLE advertisement packets are sent after each MJPEG frame transmission over WiFi completes
@@ -65,7 +65,7 @@ namespace camerabrick::comp {
                 return profile;
             };
 
-            void begin(ESP32Camera::Config cameraConfig);
+            void begin();
             void update();
 
             void registerConfigComponent(std::string name, ConfigComponent* component);

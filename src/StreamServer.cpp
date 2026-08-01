@@ -77,7 +77,7 @@ namespace camerabrick::comp {
         httpd_resp_set_hdr(req, "Cache-Control", "no-store");
         httpd_resp_set_hdr(req, "X-Framerate", "60");
 
-        if (!::camerabrick::ESP32Camera.begin()) {
+        if (!::camerabrick::ESP32Camera.startCapture()) {
             Serial.println("Camera init failed");
             this->streamActive = false;
             return ESP_FAIL;
@@ -136,7 +136,7 @@ namespace camerabrick::comp {
             }
         }
 
-        ::camerabrick::ESP32Camera.stop();
+        ::camerabrick::ESP32Camera.stopCapture();
 
         this->fps = 0;
         this->streamActive = false;

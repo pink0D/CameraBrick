@@ -7,6 +7,12 @@
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 //
 
+
+// Arduino IDE sketch settings:
+//
+// PSRAM: enabled 
+// Partition scheme: HUGE APP
+
 #include <CameraBrick.h>
 #include <MouldKingino.h>
 #include <esp_coexist.h>
@@ -17,6 +23,10 @@ MouldKing40 mk;
 class : public camerabrick::Profile {
 
     void setup() {
+
+        cameraType = camerabrick::ESP32CameraType::ESP32CAM_OV2640;
+
+        syncWithCamera = true;
 
         NimBLEDevice::init("");
         NimBLEDevice::setPower(-12, NimBLETxPowerType::Advertise);
@@ -42,7 +52,7 @@ class : public camerabrick::Profile {
 } MKProfile;
 
 void setup() {
-    CameraBrick.begin(ESP32CAM_OV2640(FRAMESIZE_CIF));
+    CameraBrick.begin();
 }
 
 void loop() {

@@ -61,7 +61,7 @@ namespace camerabrick::comp {
 
         httpd_uri_t component_config_post_uri = {
             .uri = "/config/*",
-            .method = HTTP_GET,
+            .method = HTTP_POST,
             .handler = [](httpd_req_t *req) -> esp_err_t {
                 return static_cast<WebServer*>(req->user_ctx)->component_config_handler_post(req);
             },
@@ -211,7 +211,8 @@ namespace camerabrick::comp {
                 "settings_url": "http://fpvbrick.local/settings",
                 "websocket_url": "ws://fpvbrick.local/ws",
                 "gamepad_enabled": true,
-                "fullscreen_enabled": true
+                "fullscreen_enabled": true,
+                "rotation": 0
             }        
         )";
 
@@ -239,6 +240,7 @@ namespace camerabrick::comp {
             serializeJsonPretty(json, buffer, jsonLength + 1);
 
             esp_err_t res = httpd_resp_send_chunk(req, buffer, jsonLength);
+            httpd_resp_send_chunk(req, nullptr, 0);
 
             delete [] buffer;
 
@@ -263,15 +265,15 @@ namespace camerabrick::comp {
         esp_err_t res = httpd_req_recv(req, buffer, total_len);
         buffer[total_len] = '\0';
 
-        if (res == ESP_OK) {
-            
+        if (res > 0) {
+
             JsonDocument json;
             DeserializationError error = deserializeJson(json, buffer);
 
             if ( (!error) && (component != nullptr) ) {
 
                 if (component->loadSettingsFromJson(json)) {
-                    
+
                     component->saveSettingsToStorage();
                     component->applySettings();
 

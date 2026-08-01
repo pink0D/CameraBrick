@@ -14,12 +14,18 @@
 
 #include <esp_camera.h>
 
+#include "ConfigComponent.h"
+
+namespace camerabrick {
+    enum class ESP32CameraType {ESP32CAM_OV2640, M5STACK_ATOM_S3R_M12_OV3660, M5STACK_ATOM_S3R_GC0308};
+}
+
 namespace camerabrick::comp {
 
-    class ESP32Camera {
+    class ESP32Camera : public ConfigComponent{
 
         public:
-            ESP32Camera() {};
+            ESP32Camera() : ConfigComponent("ESP32Camera") {};
         
         public:
 
@@ -38,7 +44,7 @@ namespace camerabrick::comp {
 
                 bool mirrorY = false;
                 bool mirrorX = false;
-                int rotateDegrees = 0;
+                int rotation = 0;
             };
 
             struct Frame {
@@ -49,12 +55,10 @@ namespace camerabrick::comp {
 
         public:
 
-            void setConfig(Config &config) {
-                this->config = config;
-            }                   
-            
-            bool begin();
-            void stop();
+            void begin();
+
+            bool startCapture();
+            void stopCapture();
 
             Frame* captureFrame();
             void releaseFrame(Frame *frame);
@@ -66,6 +70,10 @@ namespace camerabrick::comp {
 
             Config config;
             Frame frame;
+
+            bool loadSettingsFromJson(JsonDocument &json) override;
+            JsonDocument saveSettingsToJson() override;
+
     };
 }
 

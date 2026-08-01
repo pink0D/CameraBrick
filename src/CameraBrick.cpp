@@ -40,7 +40,7 @@ namespace camerabrick::comp {
         }
     }
 
-    void CameraBrick::begin(ESP32Camera::Config cameraConfig) {
+    void CameraBrick::begin() {
 
 
         esp_chip_info_t chip_info;
@@ -59,24 +59,14 @@ namespace camerabrick::comp {
             profile = new Profile();
         }
 
-        //Serial.println("1");
-        ::camerabrick::ESP32Camera.setConfig(cameraConfig);
+        profile->setup();
 
-        //Serial.println("2");
+        ::camerabrick::ESP32Camera.begin();
         ::camerabrick::WiFiManager.begin();
-
-        //Serial.println("3");
         ::camerabrick::WebServer.begin();
-
-        //Serial.println("4");
         ::camerabrick::StreamServer.begin();
-
-        //Serial.println("5");
         ::camerabrick::Gamepad.begin();
 
-        //Serial.println("6");
-        profile->setup();
-        //Serial.println("7");
     }
 
     void CameraBrick::registerConfigComponent(std::string name, ConfigComponent* component) {
