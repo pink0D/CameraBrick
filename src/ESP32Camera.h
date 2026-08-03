@@ -22,7 +22,7 @@ namespace camerabrick {
 
 namespace camerabrick::comp {
 
-    class ESP32Camera : public ConfigComponent{
+    class ESP32Camera : public ConfigComponent {
 
         public:
             ESP32Camera() : ConfigComponent("ESP32Camera") {};
@@ -57,11 +57,17 @@ namespace camerabrick::comp {
 
             void begin();
 
+            void blink(int count);
+
             bool startCapture();
             void stopCapture();
 
             Frame* captureFrame();
             void releaseFrame(Frame *frame);
+
+            int getConfigRotation() {
+                return config.rotation;
+            };
 
         private:
             camera_fb_t *fb = nullptr;

@@ -85,6 +85,19 @@ namespace camerabrick::comp {
     
         ConfigComponent::begin();
     }
+
+    void ESP32Camera::blink(int count) {
+
+        if (config.ledPin < 0)
+            return;
+
+        for (int i=0; i<count; i++) {
+            digitalWrite(config.ledPin, config.ledPinValueOn);
+            vTaskDelay(pdMS_TO_TICKS(500));
+            digitalWrite(config.ledPin, config.ledPinValueOff);
+            vTaskDelay(pdMS_TO_TICKS(500));
+        }
+    }
         
     bool ESP32Camera::startCapture()
     {
@@ -201,6 +214,7 @@ namespace camerabrick::comp {
     }
 
     JsonDocument ESP32Camera::saveSettingsToJson() {
+        
         JsonDocument json;
 
         json["cameraType"] = ESP32CameraTypeMapper.mapEnumToString(::CameraBrick.getProfile()->cameraType);

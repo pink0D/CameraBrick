@@ -12,15 +12,51 @@
 
 #include <Arduino.h>
 
+#include <list>
+
+#include "ConfigComponent.h"
+
 namespace camerabrick::comp {
 
-    class WiFiManager {
+    class WiFiManager : public ConfigComponent {
 
         public:
-            WiFiManager() {};
+            WiFiManager() : ConfigComponent("WiFiManager") {};
 
-            bool begin();            
+            bool begin();      
+            
+            std::string getHostname() {
+                return hostname;
+            };
 
+            int getRSSI();
+            
+        private:
+
+            struct WiFiNetwork {
+                std::string ssid;
+                std::string password;
+            };
+
+            std::list<WiFiNetwork> networks;
+            WiFiNetwork ap;
+
+            std::string hostname;
+            int connectTimeout;
+
+            bool reboot;
+
+            bool apMode = false;
+
+            void loadDefaultSettings() override;
+            void applySettings() override;
+
+            bool loadSettingsFromJson(JsonDocument &json) override;
+            JsonDocument saveSettingsToJson() override;
+
+            std::string generateDefaultSSID();
+            std::string filterString(const std::string& input, char c_min, char c_max, int max_len = 32);
+            bool isValidHostname(const std::string& s);
     };
 }
 

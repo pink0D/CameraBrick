@@ -85,11 +85,15 @@ namespace camerabrick {
             };
 
             void begin();
+
+            std::string getName() { return name; };
+
+            virtual bool isEnabled() { return true; };
             
             virtual void loadDefaultSettings() {};
             virtual void applySettings() {};
 
-            virtual bool loadSettingsFromJson(JsonDocument &json) { return false; };
+            virtual bool loadSettingsFromJson(JsonDocument &json) { return true; };
             virtual JsonDocument saveSettingsToJson() { return JsonDocument(); };
 
             void loadSettingsFromStorage();

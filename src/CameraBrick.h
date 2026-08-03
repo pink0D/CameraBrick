@@ -50,6 +50,8 @@ namespace camerabrick {
             virtual void setup() {};
             virtual void processGamepad(const GamepadState &gamepad) {};
             virtual void failsafe() {};
+
+            virtual bool isGamepadEnabled() { return false; };
     };
 }
 
@@ -70,6 +72,7 @@ namespace camerabrick::comp {
 
             void registerConfigComponent(std::string name, ConfigComponent* component);
             ConfigComponent* getConfigComponent(std::string name);
+            void iterateComponents(const std::function<void(ConfigComponent*)>& callback);
 
             void cameraSync();
 

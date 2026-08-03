@@ -22,7 +22,7 @@ MouldKing40 mk;
 
 class : public camerabrick::Profile {
 
-    void setup() {
+    void setup() override {
 
         cameraType = camerabrick::ESP32CameraType::ESP32CAM_OV2640;
 
@@ -36,16 +36,21 @@ class : public camerabrick::Profile {
         mk.connectAsync(); 
     }
 
-    void processGamepad(const camerabrick::GamepadState &gamepad) {
+    void processGamepad(const camerabrick::GamepadState &gamepad) override {
 
         mk.updateMotorOutput(MOTOR_A, gamepad.leftY() );
         mk.applyUpdates(30, true);
     }
 
-    virtual void failsafe() {
+    void failsafe() override {
 
         mk.updateMotorOutput(MOTOR_A, 0);
         mk.applyUpdates(30, true);
+    }
+
+    bool isGamepadEnabled() override {
+
+        return true;
     }
 
 

@@ -147,6 +147,10 @@ namespace camerabrick::config {
         powerPinValueOff = LOW;
         powerDelayMillis = 10;
 
+        ledPin = 2;
+        ledPinValueOn = HIGH;
+        ledPinValueOff = LOW;
+
         espCameraConfig.ledc_channel = LEDC_CHANNEL_0;
         espCameraConfig.ledc_timer = LEDC_TIMER_0;
 
@@ -180,7 +184,7 @@ namespace camerabrick::config {
         
         espCameraConfig.frame_size = FRAMESIZE_QVGA; 
 
-        mirrorX = true;
+        mirrorY = true;
     }
 
 }

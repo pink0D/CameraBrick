@@ -52,6 +52,7 @@ namespace camerabrick::comp {
         }
 
         Serial.begin(115200);
+        Serial.println("CameraBrick startup");
         //Serial.setDebugOutput(true);   
         
         if (profile == nullptr) {
@@ -67,6 +68,7 @@ namespace camerabrick::comp {
         ::camerabrick::StreamServer.begin();
         ::camerabrick::Gamepad.begin();
 
+        //::camerabrick::ESP32Camera.blink(5);
     }
 
     void CameraBrick::registerConfigComponent(std::string name, ConfigComponent* component) {
@@ -80,6 +82,13 @@ namespace camerabrick::comp {
             return configComponents.at(name);
 
         return nullptr;
+    }
+
+    void CameraBrick::iterateComponents(const std::function<void(ConfigComponent*)>& callback) {
+
+        for (const auto& [_, value] : configComponents) {
+            callback(value);
+        }
     }
 
     void CameraBrick::cameraSync() {

@@ -15,6 +15,7 @@
 #include "ConfigComponent.h"
 #include "CameraBrick.h"
 #include "Gamepad.h"
+#include "WiFiManager.h"
 
 #include "../extras/app_camera_files.h"
 
@@ -98,6 +99,21 @@ namespace camerabrick::comp {
         return true;
     }
 
+    esp_err_t WebServer::httpd_resp_send_json_chunk(httpd_req_t *req, JsonDocument &json) {
+
+        size_t jsonLength = measureJsonPretty(json);
+        char* buffer = new char[jsonLength + 1];
+
+        serializeJsonPretty(json, buffer, jsonLength + 1);
+
+        esp_err_t res = httpd_resp_send_chunk(req, buffer, jsonLength);
+        httpd_resp_send_chunk(req, nullptr, 0);
+
+        delete [] buffer;
+
+        return res;
+    }
+
     esp_err_t WebServer::websocket_handler(httpd_req_t *req) {
 
         esp_err_t res = ESP_OK;
@@ -139,7 +155,7 @@ namespace camerabrick::comp {
             const char* json_fmt = "{\"rssi\":%d, \"ping\":%s, \"fps\":%d, \"voltage\":%s, \"low_voltage_flag\":%s}";
             char json[256];
 
-            int rssi = -40;
+            int rssi = ::camerabrick::WiFiManager.getRSSI();
             
             sprintf(json, json_fmt, 
                 rssi, 
@@ -205,20 +221,28 @@ namespace camerabrick::comp {
 
         httpd_resp_set_type(req, "application/json");
 
-        const char* json = R"(
-            {
-                "stream_url": "http://fpvbrick.local:8080/stream",
-                "settings_url": "http://fpvbrick.local/settings",
-                "websocket_url": "ws://fpvbrick.local/ws",
-                "gamepad_enabled": true,
-                "fullscreen_enabled": true,
-                "rotation": 0
-            }        
-        )";
+        JsonDocument json;
 
-        httpd_resp_sendstr(req, json);
+        std::string hostname = ::camerabrick::WiFiManager.getHostname() + ".local";
 
-        return ESP_OK;
+        json["stream_url"] = std::string("http://") + hostname + std::string(":8080/stream");
+        json["settings_url"] = std::string("http://") + hostname + std::string("/settings");
+        json["websocket_url"] = std::string("ws://") + hostname + std::string("/ws");
+        json["gamepad_enabled"] = ::CameraBrick.getProfile()->isGamepadEnabled();
+        json["fullscreen_enabled"] = true;
+        json["rotation"] = ::camerabrick::ESP32Camera.getConfigRotation(); 
+
+        JsonArray jsonComponents = json["components"].to<JsonArray>();
+        
+        auto callback = [&jsonComponents](ConfigComponent* comp) {
+            JsonObject jsonComp = jsonComponents.add<JsonObject>();
+            jsonComp["name"] = comp->getName();
+            jsonComp["enabled"] = comp->isEnabled();
+        };        
+
+        ::CameraBrick.iterateComponents(callback);
+
+        return httpd_resp_send_json_chunk(req, json);
     }
 
     esp_err_t WebServer::component_config_handler_get(httpd_req_t *req) {
@@ -234,17 +258,7 @@ namespace camerabrick::comp {
 
             JsonDocument json = component->saveSettingsToJson();
 
-            size_t jsonLength = measureJsonPretty(json);
-            char* buffer = new char[jsonLength + 1];
-
-            serializeJsonPretty(json, buffer, jsonLength + 1);
-
-            esp_err_t res = httpd_resp_send_chunk(req, buffer, jsonLength);
-            httpd_resp_send_chunk(req, nullptr, 0);
-
-            delete [] buffer;
-
-            return res;
+            return httpd_resp_send_json_chunk(req, json);
         }
 
         httpd_resp_send_500(req);
