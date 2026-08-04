@@ -16,7 +16,7 @@
 
 #include "ConfigComponent.h"
 
-namespace camerabrick::comp {
+namespace camerabrick {
 
     class WiFiManager : public ConfigComponent {
 
@@ -60,8 +60,8 @@ namespace camerabrick::comp {
     };
 }
 
-namespace camerabrick {
-    extern comp::WiFiManager WiFiManager;  
+namespace camerabrick::comp {
+    extern camerabrick::WiFiManager WiFiManager;  
 }
 
 

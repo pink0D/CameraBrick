@@ -61,9 +61,6 @@ namespace camerabrick {
             int64_t timestamp = 0;
                     
     };
-}
-
-namespace camerabrick::comp {
 
     class Gamepad {
 
@@ -81,8 +78,8 @@ namespace camerabrick::comp {
     };
 }
 
-namespace camerabrick {
-    extern comp::Gamepad Gamepad;  
+namespace camerabrick::comp {
+    extern camerabrick::Gamepad Gamepad;  
 }
 
 #endif

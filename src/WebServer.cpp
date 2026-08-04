@@ -20,11 +20,11 @@
 #include "../extras/app_camera_files.h"
 
 //global instance
-namespace camerabrick {
-    camerabrick::comp::WebServer WebServer;  
+namespace camerabrick::comp {
+    camerabrick::WebServer WebServer;  
 }
 
-namespace camerabrick::comp {    
+namespace camerabrick {    
 
     bool WebServer::begin() {
 
@@ -32,7 +32,7 @@ namespace camerabrick::comp {
         config.max_uri_handlers = 16;
         config.uri_match_fn = httpd_uri_match_wildcard;
 
-        httpd_uri_t stream_uri = {
+        httpd_uri_t ws_uri = {
             .uri = "/ws",
             .method = HTTP_GET,
             .handler = [](httpd_req_t *req) -> esp_err_t {
@@ -86,7 +86,7 @@ namespace camerabrick::comp {
 
         
         if (httpd_start(&web_httpd, &config) == ESP_OK) {
-            httpd_register_uri_handler(web_httpd, &stream_uri);
+            httpd_register_uri_handler(web_httpd, &ws_uri);
             httpd_register_uri_handler(web_httpd, &root_config_uri);
             httpd_register_uri_handler(web_httpd, &component_config_get_uri);
             httpd_register_uri_handler(web_httpd, &component_config_post_uri);
@@ -155,12 +155,12 @@ namespace camerabrick::comp {
             const char* json_fmt = "{\"rssi\":%d, \"ping\":%s, \"fps\":%d, \"voltage\":%.1f, \"low_voltage_flag\":%s}";
             char json[256];
 
-            int rssi = ::camerabrick::WiFiManager.getRSSI();
+            int rssi = ::camerabrick::comp::WiFiManager.getRSSI();
             
             sprintf(json, json_fmt, 
                 rssi, 
                 &buf[5], // timestamp sent thru ws to calculate ping in browser
-                ::camerabrick::StreamServer.getFPS(), 
+                ::camerabrick::comp::StreamServer.getFPS(), 
                 ::CameraBrick.getProfile()->getVoltage(), 
                 ::CameraBrick.getProfile()->isLowVoltage() ? "true" : "false");
 
@@ -186,7 +186,7 @@ namespace camerabrick::comp {
             gamepad_raw_data d;
             memcpy(&d, &buf[5], sizeof(d));
 
-            ::camerabrick::Gamepad.updateData(d);
+            ::camerabrick::comp::Gamepad.updateData(d);
 
             //Serial.printf("%5.2f %5.2f %5.2f %5.2f %5.2f %5.2f", d.LX, d.LY, d.RX, d.RY, d.LT, d.RT);
             //Serial.println();
@@ -223,14 +223,14 @@ namespace camerabrick::comp {
 
         JsonDocument json;
 
-        std::string hostname = ::camerabrick::WiFiManager.getHostname() + ".local";
+        std::string hostname = ::camerabrick::comp::WiFiManager.getHostname() + ".local";
 
         json["stream_url"] = std::string("http://") + hostname + std::string(":8080/stream");
         json["settings_url"] = std::string("http://") + hostname + std::string("/settings");
         json["websocket_url"] = std::string("ws://") + hostname + std::string("/ws");
         json["gamepad_enabled"] = ::CameraBrick.getProfile()->isGamepadEnabled();
         json["fullscreen_enabled"] = true;
-        json["rotation"] = ::camerabrick::ESP32Camera.getRotation(); 
+        json["rotation"] = ::camerabrick::comp::ESP32Camera.getRotation(); 
 
         JsonArray jsonComponents = json["components"].to<JsonArray>();
         

@@ -56,9 +56,6 @@ namespace camerabrick {
             virtual float getVoltage() { return 0; };
             virtual bool isLowVoltage() { return false; };
     };
-}
-
-namespace camerabrick::comp {
 
     class CameraBrick {
 
@@ -90,6 +87,6 @@ namespace camerabrick::comp {
     };
 }
 
-extern camerabrick::comp::CameraBrick CameraBrick;  
+extern camerabrick::CameraBrick CameraBrick;  
 
 #endif

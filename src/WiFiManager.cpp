@@ -25,11 +25,11 @@
 #endif
 
 //global instance
-namespace camerabrick {
-    camerabrick::comp::WiFiManager WiFiManager;  
+namespace camerabrick::comp {
+    camerabrick::WiFiManager WiFiManager;  
 }
 
-namespace camerabrick::comp {
+namespace camerabrick {
 
     bool WiFiManager::begin() {
 

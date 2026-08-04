@@ -17,10 +17,8 @@
 #include "ConfigComponent.h"
 
 namespace camerabrick {
-    enum class ESP32CameraType {ESP32CAM_OV2640, M5STACK_ATOM_S3R_M12_OV3660, M5STACK_ATOM_S3R_GC0308, M5STACK_TIMER_CAMERA_OV3660};
-}
 
-namespace camerabrick::comp {
+    enum class ESP32CameraType {ESP32CAM_OV2640, M5STACK_ATOM_S3R_M12_OV3660, M5STACK_ATOM_S3R_GC0308, M5STACK_TIMER_CAMERA_OV3660};
 
     class ESP32Camera : public ConfigComponent {
 
@@ -83,8 +81,8 @@ namespace camerabrick::comp {
     };
 }
 
-namespace camerabrick {
-    extern comp::ESP32Camera ESP32Camera;  
+namespace camerabrick::comp {
+    extern camerabrick::ESP32Camera ESP32Camera;  
 }
 
 #endif

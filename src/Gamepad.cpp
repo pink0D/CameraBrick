@@ -11,11 +11,11 @@
 #include "Gamepad.h"
 
 //global instance
-namespace camerabrick {
-    camerabrick::comp::Gamepad Gamepad;  
+namespace camerabrick::comp {
+    camerabrick::Gamepad Gamepad;  
 }
 
-namespace camerabrick::comp {
+namespace camerabrick {
 
     void Gamepad::begin() {
         mutex = xSemaphoreCreateMutex();

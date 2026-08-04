@@ -14,7 +14,7 @@
 
 #include <esp_http_server.h>
 
-namespace camerabrick::comp {
+namespace camerabrick {
 
     class StreamServer {
 
@@ -44,8 +44,8 @@ namespace camerabrick::comp {
     };
 }
 
-namespace camerabrick {
-    extern comp::StreamServer StreamServer;  
+namespace camerabrick::comp {
+    extern camerabrick::StreamServer StreamServer;  
 }
 
 #endif

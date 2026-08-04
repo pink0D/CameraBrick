@@ -18,16 +18,13 @@
 
 
 //global instance
-camerabrick::comp::CameraBrick CameraBrick;  
+camerabrick::CameraBrick CameraBrick;  
 
 namespace camerabrick {
 
     Profile::Profile() {
         ::CameraBrick.setProfile(this);
     }
-}
-
-namespace camerabrick::comp {
 
     void CameraBrick::setProfile(camerabrick::Profile *profile) {
 
@@ -62,11 +59,11 @@ namespace camerabrick::comp {
 
         profile->setup();
 
-        ::camerabrick::ESP32Camera.begin();
-        ::camerabrick::WiFiManager.begin();
-        ::camerabrick::WebServer.begin();
-        ::camerabrick::StreamServer.begin();
-        ::camerabrick::Gamepad.begin();
+        ::camerabrick::comp::ESP32Camera.begin();
+        ::camerabrick::comp::WiFiManager.begin();
+        ::camerabrick::comp::WebServer.begin();
+        ::camerabrick::comp::StreamServer.begin();
+        ::camerabrick::comp::Gamepad.begin();
 
         //::camerabrick::ESP32Camera.blink(5);
     }
@@ -129,7 +126,7 @@ namespace camerabrick::comp {
 
     void CameraBrick::processGamepad() {
 
-        auto state = ::camerabrick::Gamepad.getState();
+        auto state = ::camerabrick::comp::Gamepad.getState();
 
         int64_t time_now = esp_timer_get_time();
         int64_t gamepadTimeout = state.getTimestamp() + profile->gamepadTimeoutMillis*1000;

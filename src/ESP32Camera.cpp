@@ -15,8 +15,11 @@
 #include <img_converters.h>
 
 //global instance
+namespace camerabrick::comp {
+    camerabrick::ESP32Camera ESP32Camera;  
+}
+
 namespace camerabrick {
-    camerabrick::comp::ESP32Camera ESP32Camera;  
 
     static class : public EnumMapper<ESP32CameraType> {
             void init() override {
@@ -48,9 +51,6 @@ namespace camerabrick {
                 setDefaultString("");
             };
     } ESP32ResolutionMapper;
-}
-
-namespace camerabrick::comp {
 
     void ESP32Camera::begin() {        
 

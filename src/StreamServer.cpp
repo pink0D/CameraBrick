@@ -20,11 +20,11 @@ static const char *_STREAM_BOUNDARY = "\r\n--" PART_BOUNDARY "\r\n";
 static const char *_STREAM_PART = "Content-Type: image/jpeg\r\nContent-Length: %u\r\nX-Timestamp: %d.%06d\r\n\r\n";
 
 //global instance
-namespace camerabrick {
-    camerabrick::comp::StreamServer StreamServer;  
+namespace camerabrick::comp {
+    camerabrick::StreamServer StreamServer;  
 }
 
-namespace camerabrick::comp {
+namespace camerabrick {
 
     bool StreamServer::begin() {
 
@@ -77,7 +77,7 @@ namespace camerabrick::comp {
         httpd_resp_set_hdr(req, "Cache-Control", "no-store");
         httpd_resp_set_hdr(req, "X-Framerate", "60");
 
-        if (!::camerabrick::ESP32Camera.startCapture()) {
+        if (!::camerabrick::comp::ESP32Camera.startCapture()) {
             Serial.println("Camera init failed");
             this->streamActive = false;
             return ESP_FAIL;
@@ -91,7 +91,7 @@ namespace camerabrick::comp {
 
         while (true) {
 
-            ESP32Camera::Frame *frame = ::camerabrick::ESP32Camera.captureFrame();
+            ESP32Camera::Frame *frame = ::camerabrick::comp::ESP32Camera.captureFrame();
 
             if (frame == nullptr) {
                 Serial.println("Camera capture failed");
@@ -117,7 +117,7 @@ namespace camerabrick::comp {
                 res = httpd_resp_send_chunk(req, (const char *)frame->jpegBuffer, frame->jpegBufferLength);
             }
 
-            ::camerabrick::ESP32Camera.releaseFrame(frame);
+            ::camerabrick::comp::ESP32Camera.releaseFrame(frame);
 
             ::CameraBrick.cameraSync(); // call processing inside CameraBrick after the frame has been sent over WiFi           
 
@@ -136,7 +136,7 @@ namespace camerabrick::comp {
             }
         }
 
-        ::camerabrick::ESP32Camera.stopCapture();
+        ::camerabrick::comp::ESP32Camera.stopCapture();
 
         this->fps = 0;
         this->streamActive = false;

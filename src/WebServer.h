@@ -15,7 +15,7 @@
 #include <esp_http_server.h>
 #include <ArduinoJson.h>
 
-namespace camerabrick::comp {
+namespace camerabrick {
 
     class WebServer {
 
@@ -39,8 +39,8 @@ namespace camerabrick::comp {
     };
 }
 
-namespace camerabrick {
-    extern comp::WebServer WebServer;  
+namespace camerabrick::comp {
+    extern camerabrick::WebServer WebServer;  
 }
 
 

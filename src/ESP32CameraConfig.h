@@ -15,8 +15,8 @@
 #include "ESP32Camera.h"
 
 #define DECLARE_CAMERA_CONFIG(__name__)                   \
-    struct __name__ : camerabrick::comp::ESP32Camera::Config {  \
-        __name__();                \
+    struct __name__ : camerabrick::ESP32Camera::Config {  \
+        __name__();                                       \
     };
 
 namespace camerabrick::config {
