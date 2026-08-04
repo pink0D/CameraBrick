@@ -48,6 +48,10 @@ namespace camerabrick {
             int cameraTimeoutMillis = 200;
 
             virtual void setup() {};
+
+            virtual void start() {};
+            virtual void stop() {};            
+
             virtual void processGamepad(const GamepadState &gamepad) {};
             virtual void failsafe() {};
 
@@ -71,6 +75,7 @@ namespace camerabrick {
             void update();
 
             void registerConfigComponent(std::string name, ConfigComponent* component);
+            void unregisterConfigComponent(std::string name);
             ConfigComponent* getConfigComponent(std::string name);
             void iterateComponents(const std::function<void(ConfigComponent*)>& callback);
 

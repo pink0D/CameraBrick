@@ -31,6 +31,7 @@ namespace camerabrick::gamepad {
 
     class GamepadInputMapperImpl: public camerabrick::EnumMapper<gamepad::Input> {
             void init() override {
+                addMap(gamepad::Input::NullInput, "");
                 addMap(gamepad::Input::LeftStickX, "LeftStickX");
                 addMap(gamepad::Input::LeftStickY, "LeftStickY");
                 addMap(gamepad::Input::RightStickX, "RightStickX");
@@ -47,6 +48,7 @@ namespace camerabrick::gamepad {
 
     class GamepadButtonMapperImpl: public camerabrick::EnumMapper<gamepad::Button> {
             void init() override {
+                addMap(gamepad::Button::NullButton, "");
                 addMap(gamepad::Button::Cross, "Cross");
                 addMap(gamepad::Button::Circle, "Circle");
                 addMap(gamepad::Button::Square, "Square");

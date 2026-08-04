@@ -64,6 +64,8 @@ namespace camerabrick {
 
         this->streamActive = true;
 
+        ::CameraBrick.getProfile()->start();
+
         esp_err_t res = ESP_OK;
         char *part_buf[128];
 
@@ -137,6 +139,7 @@ namespace camerabrick {
         }
 
         ::camerabrick::comp::ESP32Camera.stopCapture();
+        ::CameraBrick.getProfile()->stop();
 
         this->fps = 0;
         this->streamActive = false;

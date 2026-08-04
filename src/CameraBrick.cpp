@@ -73,6 +73,11 @@ namespace camerabrick {
         configComponents[name] = component;
     }
 
+    void CameraBrick::unregisterConfigComponent(std::string name) {
+        
+        configComponents.erase(name);
+    }
+
     ConfigComponent* CameraBrick::getConfigComponent(std::string name) {
 
         if (configComponents.count(name) > 0)
