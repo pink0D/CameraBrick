@@ -65,7 +65,7 @@ namespace camerabrick::comp {
             Frame* captureFrame();
             void releaseFrame(Frame *frame);
 
-            int getConfigRotation() {
+            int getRotation() {
                 return config.rotation;
             };
 

@@ -95,6 +95,7 @@ namespace camerabrick::config {
         espCameraConfig.frame_size = FRAMESIZE_QVGA; 
 
         mirrorX = true;
+        rotation = 270;
     }
 
     M5STACK_ATOM_S3R_GC0308::M5STACK_ATOM_S3R_GC0308() {
@@ -138,6 +139,7 @@ namespace camerabrick::config {
         espCameraConfig.frame_size = FRAMESIZE_QVGA; 
 
         mirrorX = true;
+        rotation = 270;
     }
 
     M5STACK_TIMER_CAMERA_OV3660::M5STACK_TIMER_CAMERA_OV3660() {

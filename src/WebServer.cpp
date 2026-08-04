@@ -152,7 +152,7 @@ namespace camerabrick::comp {
 
         if (strncmp((const char*)buf,"ping", 4) == 0) {
             
-            const char* json_fmt = "{\"rssi\":%d, \"ping\":%s, \"fps\":%d, \"voltage\":%s, \"low_voltage_flag\":%s}";
+            const char* json_fmt = "{\"rssi\":%d, \"ping\":%s, \"fps\":%d, \"voltage\":%.1f, \"low_voltage_flag\":%s}";
             char json[256];
 
             int rssi = ::camerabrick::WiFiManager.getRSSI();
@@ -161,8 +161,8 @@ namespace camerabrick::comp {
                 rssi, 
                 &buf[5], // timestamp sent thru ws to calculate ping in browser
                 ::camerabrick::StreamServer.getFPS(), 
-                "7.4", 
-                "false");
+                ::CameraBrick.getProfile()->getVoltage(), 
+                ::CameraBrick.getProfile()->isLowVoltage() ? "true" : "false");
 
             //Serial.println("JSON response");
             //Serial.println(json);
@@ -230,7 +230,7 @@ namespace camerabrick::comp {
         json["websocket_url"] = std::string("ws://") + hostname + std::string("/ws");
         json["gamepad_enabled"] = ::CameraBrick.getProfile()->isGamepadEnabled();
         json["fullscreen_enabled"] = true;
-        json["rotation"] = ::camerabrick::ESP32Camera.getConfigRotation(); 
+        json["rotation"] = ::camerabrick::ESP32Camera.getRotation(); 
 
         JsonArray jsonComponents = json["components"].to<JsonArray>();
         

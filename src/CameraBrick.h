@@ -52,6 +52,9 @@ namespace camerabrick {
             virtual void failsafe() {};
 
             virtual bool isGamepadEnabled() { return false; };
+
+            virtual float getVoltage() { return 0; };
+            virtual bool isLowVoltage() { return false; };
     };
 }
 
