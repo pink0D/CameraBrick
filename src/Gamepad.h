@@ -13,6 +13,66 @@
 #include <Arduino.h>
 #include <freertos/semphr.h>
 
+#include "ConfigComponent.h"
+
+namespace camerabrick::gamepad {
+
+    enum class Input {NullInput, 
+        LeftStickX, LeftStickY, 
+        RightStickX, RightStickY, 
+        LeftTrigger, RightTrigger};
+
+    enum class Button {NullButton, 
+        Cross, Circle, Square, Triangle, 
+        L1, R1, L2, R2, 
+        Share, Options, 
+        L3, R3, 
+        DPadUp, DPadDown, DPadLeft, DPadRight};
+
+    class GamepadInputMapperImpl: public camerabrick::EnumMapper<gamepad::Input> {
+            void init() override {
+                addMap(gamepad::Input::LeftStickX, "LeftStickX");
+                addMap(gamepad::Input::LeftStickY, "LeftStickY");
+                addMap(gamepad::Input::RightStickX, "RightStickX");
+                addMap(gamepad::Input::RightStickY, "RightStickY");
+                addMap(gamepad::Input::LeftTrigger, "LeftTrigger");
+                addMap(gamepad::Input::RightTrigger, "RightTrigger");
+
+                setDefaultEnum(gamepad::Input::NullInput);
+                setDefaultString("");
+            };
+    };    
+
+    extern GamepadInputMapperImpl GamepadInputMapper;
+
+    class GamepadButtonMapperImpl: public camerabrick::EnumMapper<gamepad::Button> {
+            void init() override {
+                addMap(gamepad::Button::Cross, "Cross");
+                addMap(gamepad::Button::Circle, "Circle");
+                addMap(gamepad::Button::Square, "Square");
+                addMap(gamepad::Button::Triangle, "Triangle");
+                addMap(gamepad::Button::L1, "L1");
+                addMap(gamepad::Button::R1, "R1");
+                addMap(gamepad::Button::L2, "L2");
+                addMap(gamepad::Button::R2, "R2");
+                addMap(gamepad::Button::Share, "Share");
+                addMap(gamepad::Button::Options, "Options");
+                addMap(gamepad::Button::L3, "L3");
+                addMap(gamepad::Button::R3, "R3");
+                addMap(gamepad::Button::DPadUp, "DPadUp");
+                addMap(gamepad::Button::DPadDown, "DPadDown");
+                addMap(gamepad::Button::DPadLeft, "DPadLeft");
+                addMap(gamepad::Button::DPadRight, "DPadRight");
+
+                setDefaultEnum(gamepad::Button::NullButton);
+                setDefaultString("");
+            };
+    };  
+
+    extern GamepadButtonMapperImpl GamepadButtonMapper;
+
+}
+
 namespace camerabrick {
 
     struct __attribute__((packed)) gamepad_raw_data {
@@ -53,6 +113,10 @@ namespace camerabrick {
             float rightY() const { return data.RY; };
             float leftTrigger() const { return data.LT; };
             float rightTrigger() const { return data.RT; };
+
+            float getInputValue(gamepad::Input input);
+            bool getButtonState(gamepad::Button button);
+            bool getButtonClick(gamepad::Button button);
 
             int64_t getTimestamp() const { return timestamp; };
 
