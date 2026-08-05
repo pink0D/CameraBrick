@@ -62,6 +62,28 @@ namespace camerabrick {
             return ESP_FAIL;
         }
 
+        bool enableCapture = true;
+
+        char*  buf;
+        size_t buf_len;
+        char param_value[64];
+
+        buf_len = httpd_req_get_url_query_len(req) + 1;
+        buf = (char*) malloc(buf_len);
+
+        if (httpd_req_get_url_query_str(req, buf, buf_len) == ESP_OK) {
+            if (httpd_query_key_value(buf, "capture", param_value, sizeof(param_value)) == ESP_OK) {
+                if (strcmp(param_value,"false") == 0) {
+                    enableCapture = false;
+                    Serial.println("Camera capture disabled with query param: capture=false");
+                }
+            }
+        }
+
+        free(buf);
+
+
+        Serial.println("Camera stream started");
         this->streamActive = true;
 
         ::CameraBrick.getProfile()->start();
@@ -86,44 +108,56 @@ namespace camerabrick {
         }
 
         this->fps = 0;
+        this->resetStreamTimeout();
 
-        int fps_count_time = 1; // refresh fps every 1 secons
+        int fps_count_time = 1; // refresh fps every 1 second
         int frame_count = 0;
         int64_t time_reset_frame_count = esp_timer_get_time() + fps_count_time * 1000000;
 
         while (true) {
 
-            ESP32Camera::Frame *frame = ::camerabrick::comp::ESP32Camera.captureFrame();
+            if (enableCapture) {
 
-            if (frame == nullptr) {
-                Serial.println("Camera capture failed");
-                res = ESP_FAIL;
-            }                          
+                ESP32Camera::Frame *frame = ::camerabrick::comp::ESP32Camera.captureFrame();
 
-            if (res == ESP_OK) {
-                res = httpd_resp_send_chunk(req, _STREAM_BOUNDARY, strlen(_STREAM_BOUNDARY));
+                if (frame == nullptr) {
+                    Serial.println("Camera capture failed");
+                    res = ESP_FAIL;
+                }                          
+
+                if (res == ESP_OK) {
+                    res = httpd_resp_send_chunk(req, _STREAM_BOUNDARY, strlen(_STREAM_BOUNDARY));
+                }
+
+                if (res == ESP_OK) {
+
+                    size_t hlen = snprintf((char *)part_buf, 128, 
+                        _STREAM_PART, 
+                        frame->jpegBufferLength, 
+                        frame->timestamp.tv_sec, 
+                        frame->timestamp.tv_usec);
+
+                    res = httpd_resp_send_chunk(req, (const char *)part_buf, hlen);
+                }
+
+                if (res == ESP_OK) {
+                    res = httpd_resp_send_chunk(req, (const char *)frame->jpegBuffer, frame->jpegBufferLength);
+                }
+
+                ::camerabrick::comp::ESP32Camera.releaseFrame(frame);
+
+            } else {
+                vTaskDelay(pdMS_TO_TICKS(40));
             }
-
-            if (res == ESP_OK) {
-
-                size_t hlen = snprintf((char *)part_buf, 128, 
-                    _STREAM_PART, 
-                    frame->jpegBufferLength, 
-                    frame->timestamp.tv_sec, 
-                    frame->timestamp.tv_usec);
-
-                res = httpd_resp_send_chunk(req, (const char *)part_buf, hlen);
-            }
-
-            if (res == ESP_OK) {
-                res = httpd_resp_send_chunk(req, (const char *)frame->jpegBuffer, frame->jpegBufferLength);
-            }
-
-            ::camerabrick::comp::ESP32Camera.releaseFrame(frame);
 
             ::CameraBrick.cameraSync(); // call processing inside CameraBrick after the frame has been sent over WiFi           
 
             int64_t time_now = esp_timer_get_time();
+
+            // stop streaming if timeout was not updated by ping in websocket handler
+            if (time_now > this->streamTimeout) {
+                break;
+            }
 
             frame_count++;
 
@@ -131,6 +165,9 @@ namespace camerabrick {
                 time_reset_frame_count = time_now + fps_count_time*1000000;
                 this->fps = int( ((float)frame_count) / ((float)fps_count_time) );
                 frame_count = 0;
+
+                Serial.print("Stream FPS=");
+                Serial.println(this->fps);
             }
             
             if (res != ESP_OK) {
@@ -144,7 +181,18 @@ namespace camerabrick {
         this->fps = 0;
         this->streamActive = false;
 
+        Serial.println("Camera stream stopped");
+
         return res;
     }
+
+    void StreamServer::resetStreamTimeout() {
+        streamTimeout = esp_timer_get_time() + 5000000;
+    };
+
+    void StreamServer::stopStream() {
+        streamTimeout = 0;
+    }
+
 
 }

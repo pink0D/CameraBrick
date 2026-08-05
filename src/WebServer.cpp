@@ -150,7 +150,13 @@ namespace camerabrick {
             //return ESP_FAIL;
         }
 
+        if (strncmp((const char*)buf,"stop", 4) == 0) {
+            ::camerabrick::comp::StreamServer.stopStream();
+        }
+
         if (strncmp((const char*)buf,"ping", 4) == 0) {
+
+            ::camerabrick::comp::StreamServer.resetStreamTimeout(); // update stream timeout
             
             const char* json_fmt = "{\"rssi\":%d, \"ping\":%s, \"fps\":%d, \"voltage\":%.1f, \"low_voltage_flag\":%s}";
             char json[256];

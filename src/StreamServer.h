@@ -31,6 +31,9 @@ namespace camerabrick {
                 return streamActive;
             };
 
+            void resetStreamTimeout();
+            void stopStream();
+
         private:
             
             httpd_handle_t stream_httpd = nullptr;
@@ -40,6 +43,8 @@ namespace camerabrick {
             int fps = 0;
 
             bool streamActive = false;
+
+            int64_t streamTimeout = 0;
 
     };
 }

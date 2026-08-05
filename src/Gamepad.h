@@ -116,9 +116,9 @@ namespace camerabrick {
             float leftTrigger() const { return data.LT; };
             float rightTrigger() const { return data.RT; };
 
-            float getInputValue(gamepad::Input input);
-            bool getButtonState(gamepad::Button button);
-            bool getButtonClick(gamepad::Button button);
+            float getInputValue(gamepad::Input input) const;
+            bool getButtonState(gamepad::Button button) const;
+            bool getButtonClick(gamepad::Button button) const;
 
             int64_t getTimestamp() const { return timestamp; };
 

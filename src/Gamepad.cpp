@@ -48,7 +48,7 @@ namespace camerabrick {
         return s; // NRVO
     }
 
-    float GamepadState::getInputValue(gamepad::Input input) {
+    float GamepadState::getInputValue(gamepad::Input input) const {
 
         switch (input) {
 
@@ -69,12 +69,15 @@ namespace camerabrick {
 
             case gamepad::Input::RightTrigger:
                 return rightTrigger();
+
+            case gamepad::Input::NullInput:
+                return 0;
         }
 
         return 0;
     }
 
-    bool GamepadState::getButtonState(gamepad::Button button) {
+    bool GamepadState::getButtonState(gamepad::Button button) const {
 
         int index = static_cast<int>(button);
 
@@ -84,7 +87,7 @@ namespace camerabrick {
         return false;
     }
 
-    bool GamepadState::getButtonClick(gamepad::Button button) {
+    bool GamepadState::getButtonClick(gamepad::Button button) const {
 
         static std::map<int, bool> currentClickValues;
 
