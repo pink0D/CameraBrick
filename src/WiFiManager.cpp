@@ -147,7 +147,16 @@ namespace camerabrick {
     void WiFiManager::applySettings() {
 
         if (reboot) {
-            ESP.restart();
+
+            // wait while reponse is sent then reboot
+            xTaskCreate( [](void* ctx) {
+                
+                vTaskDelay(pdMS_TO_TICKS(1000));
+                ESP.restart();
+
+            }, "WiFiManager::applySettings::reboot", 2*1024, this, 0, nullptr);
+
+            
         }
     }
 

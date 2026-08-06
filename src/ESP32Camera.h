@@ -20,6 +20,8 @@ namespace camerabrick {
 
     enum class ESP32CameraType {ESP32CAM_OV2640, M5STACK_ATOM_S3R_M12_OV3660, M5STACK_ATOM_S3R_GC0308, M5STACK_TIMER_CAMERA_OV3660};
 
+    enum class CameraSensorType {OV2640, OV3660};
+
     class ESP32Camera : public ConfigComponent {
 
         public:
@@ -31,6 +33,8 @@ namespace camerabrick {
 
                 camera_config_t espCameraConfig;
 
+                CameraSensorType sensorType;
+
                 int powerPin = -1;
                 int powerPinValueOn;
                 int powerPinValueOff;
@@ -39,6 +43,8 @@ namespace camerabrick {
                 int ledPin = -1;
                 int ledPinValueOn;
                 int ledPinValueOff;
+
+                bool binning = false;
 
                 bool mirrorY = false;
                 bool mirrorX = false;
