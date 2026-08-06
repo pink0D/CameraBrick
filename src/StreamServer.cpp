@@ -63,6 +63,7 @@ namespace camerabrick {
         }
 
         bool enableCapture = true;
+        std::string req_token = "";
 
         char*  buf;
         size_t buf_len;
@@ -72,18 +73,24 @@ namespace camerabrick {
         buf = (char*) malloc(buf_len);
 
         if (httpd_req_get_url_query_str(req, buf, buf_len) == ESP_OK) {
+
             if (httpd_query_key_value(buf, "capture", param_value, sizeof(param_value)) == ESP_OK) {
                 if (strcmp(param_value,"false") == 0) {
                     enableCapture = false;
                     Serial.println("Camera capture disabled with query param: capture=false");
                 }
             }
+
+            if (httpd_query_key_value(buf, "token", param_value, sizeof(param_value)) == ESP_OK) {
+                req_token = param_value;
+            }
         }
 
         free(buf);
 
 
-        Serial.println("Camera stream started");
+        Serial.print("Camera stream started, token=");
+        Serial.println(req_token.c_str());
         this->streamActive = true;
 
         ::CameraBrick.getProfile()->start();
@@ -115,6 +122,13 @@ namespace camerabrick {
         int64_t time_reset_frame_count = esp_timer_get_time() + fps_count_time * 1000000;
 
         while (true) {
+
+            if (!isValidToken(req_token)) {
+                Serial.print("Camera stream token=");
+                Serial.print(req_token.c_str());
+                Serial.println(" is invalid, stopping stream");
+                break;
+            }
 
             if (enableCapture) {
 
@@ -181,7 +195,8 @@ namespace camerabrick {
         this->fps = 0;
         this->streamActive = false;
 
-        Serial.println("Camera stream stopped");
+        Serial.print("Camera stream stopped, token=");
+        Serial.println(req_token.c_str());
 
         return res;
     }
@@ -192,6 +207,14 @@ namespace camerabrick {
 
     void StreamServer::stopStream() {
         streamTimeout = 0;
+    }
+
+    void StreamServer::updateToken(std::string token) {
+        this->token = token;
+    }
+
+    bool StreamServer::isValidToken(std::string token) {
+        return ((token == "secret") || (token == this->token));
     }
 
 

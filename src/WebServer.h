@@ -51,11 +51,16 @@ namespace camerabrick {
             httpd_handle_t web_httpd = nullptr;
 
             esp_err_t websocket_handler(httpd_req_t *req);
+
             esp_err_t file_handler(httpd_req_t *req);
+
             esp_err_t root_config_handler(httpd_req_t *req);
+
             esp_err_t component_config_handler_options(httpd_req_t *req);
             esp_err_t component_config_handler_get(httpd_req_t *req);
             esp_err_t component_config_handler_post(httpd_req_t *req);
+
+            esp_err_t token_get_handler(httpd_req_t *req);
 
             esp_err_t httpd_resp_send_json_chunk(httpd_req_t *req, JsonDocument &json);
 

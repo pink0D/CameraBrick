@@ -78,6 +78,15 @@ namespace camerabrick {
             .user_ctx = this,
         };  
 
+        httpd_uri_t token_uri = {
+            .uri = "/token",
+            .method = HTTP_GET,
+            .handler = [](httpd_req_t *req) -> esp_err_t {
+                return static_cast<WebServer*>(req->user_ctx)->token_get_handler(req);
+            },
+            .user_ctx = this,
+        };  
+
         httpd_uri_t files_uri = {
             .uri = "/*",
             .method = HTTP_GET,
@@ -100,6 +109,7 @@ namespace camerabrick {
             httpd_register_uri_handler(web_httpd, &component_config_get_uri);
             httpd_register_uri_handler(web_httpd, &component_config_post_uri);
             httpd_register_uri_handler(web_httpd, &component_config_options_uri);
+            httpd_register_uri_handler(web_httpd, &token_uri);
             httpd_register_uri_handler(web_httpd, &files_uri);
         }
         
@@ -245,6 +255,21 @@ namespace camerabrick {
         httpd_resp_send_404(req);
         return ESP_FAIL;
     }
+
+    esp_err_t WebServer::token_get_handler(httpd_req_t *req) {
+
+        JsonDocument json;
+
+        char token[16];
+        sprintf(token,"%08X", esp_random());
+
+        json["token"] = token;
+
+        ::camerabrick::comp::StreamServer.updateToken(token);
+
+        return httpd_resp_send_json_chunk(req, json);
+    }
+
     
     esp_err_t WebServer::root_config_handler(httpd_req_t *req) {
 
@@ -252,6 +277,7 @@ namespace camerabrick {
 
         std::string hostname = ::camerabrick::comp::WiFiManager.getHostname() + ".local";
 
+        json["token_url"] = std::string("http://") + hostname + std::string("/token");
         json["stream_url"] = std::string("http://") + hostname + std::string(":8080/stream");
         json["settings_url"] = std::string("http://") + hostname + std::string("/settings");
         json["websocket_url"] = std::string("ws://") + hostname + std::string("/ws");
