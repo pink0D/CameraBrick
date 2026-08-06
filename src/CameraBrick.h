@@ -23,6 +23,7 @@
 #include "ESP32Camera.h"
 #include "ConfigComponent.h"
 #include "Gamepad.h"
+#include "WebServer.h"
 
 
 namespace camerabrick {

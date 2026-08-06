@@ -18,6 +18,8 @@
 #include <MouldKingino.h>
 #include <esp_coexist.h>
 
+#include "app_mk_files.h"
+
 const auto CAMERA_TYPE = camerabrick::ESP32CameraType::ESP32CAM_OV2640;
 
 
@@ -71,6 +73,9 @@ class MouldKingProfile: public camerabrick::Profile, camerabrick::ConfigComponen
             // reduce BLE power since ESP32CAM needs lot of power for camera and WiFi
 
             esp_coex_preference_set(ESP_COEX_PREFER_WIFI); // prefer WiFi over Bluetooth to keep framerate stable
+
+            // add files for web app
+            camerabrick::comp::WebServer.addWebFiles(app_mk_web_data);
         }
 
         void start() override {

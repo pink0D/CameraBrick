@@ -15,6 +15,26 @@
 #include <esp_http_server.h>
 #include <ArduinoJson.h>
 
+#include <list>
+
+#ifndef FILE_DATA_STRUCT_DEFINED
+#define FILE_DATA_STRUCT_DEFINED
+
+struct web_file_data {
+    const char*     file_name;
+    size_t          content_size;
+    const char*     content_type;
+    const char*     content_encoding;
+    const uint8_t*  content;
+};
+
+struct web_data {
+    const web_file_data* files;
+    size_t               count;
+};
+
+#endif 
+
 namespace camerabrick {
 
     class WebServer {
@@ -24,6 +44,8 @@ namespace camerabrick {
 
             bool begin();
 
+            void addWebFiles(const web_data &files);
+
         private:            
 
             httpd_handle_t web_httpd = nullptr;
@@ -31,10 +53,13 @@ namespace camerabrick {
             esp_err_t websocket_handler(httpd_req_t *req);
             esp_err_t file_handler(httpd_req_t *req);
             esp_err_t root_config_handler(httpd_req_t *req);
+            esp_err_t component_config_handler_options(httpd_req_t *req);
             esp_err_t component_config_handler_get(httpd_req_t *req);
             esp_err_t component_config_handler_post(httpd_req_t *req);
 
             esp_err_t httpd_resp_send_json_chunk(httpd_req_t *req, JsonDocument &json);
+
+            std::list<web_data> webData;
 
     };
 }

@@ -17,7 +17,7 @@
 #include "Gamepad.h"
 #include "WiFiManager.h"
 
-#include "../extras/app_camera_files.h"
+#include "web/app_camera_files.h"
 
 //global instance
 namespace camerabrick::comp {
@@ -69,6 +69,15 @@ namespace camerabrick {
             .user_ctx = this,
         };  
 
+        httpd_uri_t component_config_options_uri = {
+            .uri = "/config/*",
+            .method = HTTP_OPTIONS,
+            .handler = [](httpd_req_t *req) -> esp_err_t {
+                return static_cast<WebServer*>(req->user_ctx)->component_config_handler_options(req);
+            },
+            .user_ctx = this,
+        };  
+
         httpd_uri_t files_uri = {
             .uri = "/*",
             .method = HTTP_GET,
@@ -90,9 +99,11 @@ namespace camerabrick {
             httpd_register_uri_handler(web_httpd, &root_config_uri);
             httpd_register_uri_handler(web_httpd, &component_config_get_uri);
             httpd_register_uri_handler(web_httpd, &component_config_post_uri);
+            httpd_register_uri_handler(web_httpd, &component_config_options_uri);
             httpd_register_uri_handler(web_httpd, &files_uri);
         }
         
+        addWebFiles(app_camera_web_data);
 
         Serial.println("Web server started");
 
@@ -100,6 +111,10 @@ namespace camerabrick {
     }
 
     esp_err_t WebServer::httpd_resp_send_json_chunk(httpd_req_t *req, JsonDocument &json) {
+
+        httpd_resp_set_type(req, "application/json");
+        httpd_resp_set_hdr(req, "Access-Control-Allow-Origin", "*");
+        httpd_resp_set_hdr(req, "Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
 
         size_t jsonLength = measureJsonPretty(json);
         char* buffer = new char[jsonLength + 1];
@@ -201,31 +216,37 @@ namespace camerabrick {
         return res;     
     }
 
+    void WebServer::addWebFiles(const web_data &files) {
+
+        webData.push_back(files);
+    }
+
     esp_err_t WebServer::file_handler(httpd_req_t *req) {
 
-        for (int i=0; i<app_camera_files_count; i++) {
+        for (const auto& web : webData) {
+            
+            for (int i=0; i<web.count; i++) {
 
-            if (strcmp(req->uri, app_camera_files[i].file_name) == 0) {
+                if (strcmp(req->uri, web.files[i].file_name) == 0) {
 
-                httpd_resp_set_type(req, app_camera_files[i].content_type);
+                    httpd_resp_set_type(req, web.files[i].content_type);
 
-                if (app_camera_files[i].content_encoding != nullptr)
-                    httpd_resp_set_hdr(req, "Content-Encoding", app_camera_files[i].content_encoding);
+                    if (web.files[i].content_encoding != nullptr)
+                        httpd_resp_set_hdr(req, "Content-Encoding", web.files[i].content_encoding);
 
-                httpd_resp_send_chunk(req, (const char*)app_camera_files[i].content, app_camera_files[i].content_size);
-                httpd_resp_send_chunk(req, nullptr, 0);
+                    httpd_resp_send_chunk(req, (const char*)web.files[i].content, web.files[i].content_size);
+                    httpd_resp_send_chunk(req, nullptr, 0);
 
-                return ESP_OK;
-            }
-        }            
+                    return ESP_OK;
+                }
+            }         
+        }
 
         httpd_resp_send_404(req);
         return ESP_FAIL;
     }
     
     esp_err_t WebServer::root_config_handler(httpd_req_t *req) {
-
-        httpd_resp_set_type(req, "application/json");
 
         JsonDocument json;
 
@@ -251,9 +272,19 @@ namespace camerabrick {
         return httpd_resp_send_json_chunk(req, json);
     }
 
-    esp_err_t WebServer::component_config_handler_get(httpd_req_t *req) {
+    esp_err_t WebServer::component_config_handler_options(httpd_req_t *req) {
 
-        httpd_resp_set_type(req, "application/json");
+        httpd_resp_set_hdr(req, "Access-Control-Allow-Origin", "*");
+        httpd_resp_set_hdr(req, "Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+        httpd_resp_set_hdr(req, "Access-Control-Allow-Headers", "Content-Type");
+
+        httpd_resp_set_status(req, "200 OK");
+        httpd_resp_send(req, NULL, 0);
+
+        return ESP_OK;
+    }
+
+    esp_err_t WebServer::component_config_handler_get(httpd_req_t *req) {
 
         // extract component name from '/config/<name>' uri
         std::string name = std::string(req->uri).substr(8); 
