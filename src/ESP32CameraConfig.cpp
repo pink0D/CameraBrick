@@ -100,8 +100,6 @@ namespace camerabrick::config {
 
         mirrorX = true;
         rotation = 270;
-
-        //binning = true;
     }
 
     M5STACK_ATOM_S3R_GC0308::M5STACK_ATOM_S3R_GC0308() {
@@ -195,8 +193,6 @@ namespace camerabrick::config {
         espCameraConfig.jpeg_quality = 10;
         
         espCameraConfig.frame_size = FRAMESIZE_QVGA; 
-
-        //binning = true;
 
         mirrorY = true;
     }

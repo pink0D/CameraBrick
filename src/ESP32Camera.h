@@ -44,8 +44,6 @@ namespace camerabrick {
                 int ledPinValueOn;
                 int ledPinValueOff;
 
-                bool binning = false;
-
                 bool mirrorY = false;
                 bool mirrorX = false;
                 int rotation = 0;

@@ -118,54 +118,12 @@ namespace camerabrick {
 
         sensor_t *s = esp_camera_sensor_get();
 
-        if ( (config.sensorType == CameraSensorType::OV2640) && (config.espCameraConfig.frame_size == FRAMESIZE_CIF) ) {
-            err = s->set_res_raw(s, 2, 0, 0, 0, 0, 0, 400, 296, 400, 296, false, false);
-            if (err != ESP_OK) {
-                Serial.printf("Could not set camera window with error 0x%x", err);
-                return false;
-            }
+        if (config.mirrorX)
+            s->set_hmirror(s, 1);
 
-            err = s->set_framesize(s, (framesize_t) FRAMESIZE_CIF);
-            if (err != ESP_OK) {
-                Serial.printf("Could not set frame size with error 0x%x", err);
-                return false;
-            }
-        }
+        if (config.mirrorY)
+            s->set_vflip(s, 1);  
 
-        if ( (config.sensorType == CameraSensorType::OV3660) && config.binning) {
-
-            switch ( (config.mirrorX << 1) | config.mirrorY) {
-                case 0: // normal mode
-                    s->set_reg(s, 0x3820, 0x01, 0x01);
-                    s->set_reg(s, 0x3821, 0x01, 0x01);
-                    s->set_reg(s, 0x4514, 0xFF, 0xAA);     
-                    break;
-                case 1: // vertical flip
-                    s->set_reg(s, 0x3820, 0x07, 0x07);
-                    s->set_reg(s, 0x3821, 0x01, 0x01);
-                    s->set_reg(s, 0x4514, 0xFF, 0xBB);     
-                    break;
-                case 2: // horizontal flip
-                    s->set_reg(s, 0x3820, 0x01, 0x01);
-                    s->set_reg(s, 0x3821, 0x07, 0x07);
-                    s->set_reg(s, 0x4514, 0xFF, 0xBB);     
-                    break;
-                case 3: // horizontal and vertical flip
-                    s->set_reg(s, 0x3820, 0x07, 0x07);
-                    s->set_reg(s, 0x3821, 0x07, 0x07);
-                    s->set_reg(s, 0x4514, 0xFF, 0xAA);     
-                    break;
-            }
-
-        } else {
-
-            if (config.mirrorX)
-                s->set_hmirror(s, 1);
-
-            if (config.mirrorY)
-                s->set_vflip(s, 1);            
-        }        
-      
         return true;
     }
 
@@ -236,7 +194,6 @@ namespace camerabrick {
     bool ESP32Camera::loadSettingsFromJson(JsonDocument &json) {
 
         config.espCameraConfig.frame_size = ESP32ResolutionMapper.mapStringToEnum(json["resolution"]);
-        config.binning = json["binning"];
         config.mirrorX = json["mirrorX"];
         config.mirrorY = json["mirrorY"];
         config.rotation = max(0, min(359,  (int)(json["rotation"])));
@@ -250,7 +207,6 @@ namespace camerabrick {
 
         json["cameraType"] = ESP32CameraTypeMapper.mapEnumToString(::CameraBrick.getProfile()->cameraType);
         json["resolution"] = ESP32ResolutionMapper.mapEnumToString(config.espCameraConfig.frame_size);
-        json["binning"] = config.binning;
         json["mirrorX"] = config.mirrorX;
         json["mirrorY"] = config.mirrorY;
         json["rotation"] = config.rotation;

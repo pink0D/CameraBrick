@@ -135,15 +135,13 @@ namespace camerabrick {
 
             if (enableCapture) {
 
-                /*
                 auto dma_free = heap_caps_get_free_size(MALLOC_CAP_DMA);
                 auto dma_largest = heap_caps_get_largest_free_block(MALLOC_CAP_DMA);
 
                 // delay when DMA pressure detected
                 if (dma_free < 12 * 1024 || dma_largest < 4 * 1024) {
                     vTaskDelay(pdMS_TO_TICKS(250));
-                }
-                */
+                }                
 
                 ESP32Camera::Frame *frame = ::camerabrick::comp::ESP32Camera.captureFrame();
 
