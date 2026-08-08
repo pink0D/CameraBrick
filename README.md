@@ -10,7 +10,7 @@ picture
 # Supported ESP32 boards
 
 | Board | View | Status |
-| :--- | :---- |
+| :--- | :---- |  :---- |
 | **Generic ESP32CAM** (a.k.a. AI Thinker) | <img width="150" alt="esp32cam_nobg" src="https://github.com/user-attachments/assets/e5fd0934-cef5-497d-852f-630c7d8b94a2" /> | :white_check_mark: Supported, tested with OV2640 (OV3660 should work as well) |
 | [M5Stack AtomS3R-M12](https://docs.m5stack.com/en/core/AtomS3R-M12) | <img width="150" alt="m5-m12" src="https://github.com/user-attachments/assets/63c0360c-79ce-4625-8cb4-d7040f23323f" /> | :white_check_mark: Supported |
 | [M5Stack AtomS3R-CAM](https://docs.m5stack.com/en/core/AtomS3R%20Cam) | <img width="150" alt="m5-cam" src="https://github.com/user-attachments/assets/2af9948b-57ea-4870-a004-84ac6bd53c3e" /> | :white_check_mark: Supported (possible lower framerate) |
