@@ -204,6 +204,10 @@ namespace camerabrick {
             jpg_buf_len = fb->len;
             jpg_buf = fb->buf;
         }
+
+        // check valid JPEG EOI marker (0xFF 0xD9)
+        if (jpg_buf_len < 2 || jpg_buf[jpg_buf_len - 2] != 0xFF || jpg_buf[jpg_buf_len - 1] != 0xD9)
+            return nullptr;
         
         //Frame *frame = new Frame();
         

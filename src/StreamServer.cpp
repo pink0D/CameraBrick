@@ -123,6 +123,9 @@ namespace camerabrick {
 
         while (true) {
 
+            // check token so only the latest token can be used to get streaming data
+            // this prevents camera capture being blocked by browser's background connections left open for closed tabs
+
             if (!isValidToken(req_token)) {
                 Serial.print("Camera stream token=");
                 Serial.print(req_token.c_str());
@@ -132,13 +135,23 @@ namespace camerabrick {
 
             if (enableCapture) {
 
+                /*
+                auto dma_free = heap_caps_get_free_size(MALLOC_CAP_DMA);
+                auto dma_largest = heap_caps_get_largest_free_block(MALLOC_CAP_DMA);
+
+                // delay when DMA pressure detected
+                if (dma_free < 12 * 1024 || dma_largest < 4 * 1024) {
+                    vTaskDelay(pdMS_TO_TICKS(250));
+                }
+                */
+
                 ESP32Camera::Frame *frame = ::camerabrick::comp::ESP32Camera.captureFrame();
 
                 if (frame == nullptr) {
                     Serial.println("Camera capture failed");
                     res = ESP_FAIL;
-                }                          
-
+                }         
+                
                 if (res == ESP_OK) {
                     res = httpd_resp_send_chunk(req, _STREAM_BOUNDARY, strlen(_STREAM_BOUNDARY));
                 }
@@ -159,8 +172,19 @@ namespace camerabrick {
                 }
 
                 ::camerabrick::comp::ESP32Camera.releaseFrame(frame);
+                
+                if (res == ESP_OK) {
+                    frame_count++;
+                }
+                else{
+                    // delay if capture was not successful
+                    vTaskDelay(pdMS_TO_TICKS(100));
+                    res = ESP_OK;
+                }
 
             } else {
+                // capture disabled
+                frame_count++;
                 vTaskDelay(pdMS_TO_TICKS(40));
             }
 
@@ -173,7 +197,6 @@ namespace camerabrick {
                 break;
             }
 
-            frame_count++;
 
             if (time_now > time_reset_frame_count) {
                 time_reset_frame_count = time_now + fps_count_time*1000000;
@@ -202,7 +225,7 @@ namespace camerabrick {
     }
 
     void StreamServer::resetStreamTimeout() {
-        streamTimeout = esp_timer_get_time() + 5000000;
+        streamTimeout = esp_timer_get_time() + 2000000;
     };
 
     void StreamServer::stopStream() {
