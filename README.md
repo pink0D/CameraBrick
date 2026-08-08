@@ -21,14 +21,14 @@ picture
 
 CameraBricks supports MK4 (4-channel) and MK6 (6-channel) power modules controlled with simple Bluetooth LE advertising ([MouldKingino](https://github.com/pink0D/MouldKingino)).
 
-<img width="200" alt="MK logo" src="https://github.com/user-attachments/assets/7d436cb4-5eb3-4f68-9fc1-404786991aca" />
-<img width="200" alt="mk40" src="https://github.com/user-attachments/assets/c3ec0708-9cdb-4308-a025-21dcd572bf07" />
+<img width="100" alt="MK logo" src="https://github.com/user-attachments/assets/7d436cb4-5eb3-4f68-9fc1-404786991aca" />
+
 <img width="200" alt="mk60" src="https://github.com/user-attachments/assets/b88d586e-67f1-4b0c-a7f2-5ec4de91fed2" />
 
 
 |  Board  | Status   |
 | :---           |    :----        |   
-| **Mould King 4.0 Power Module**  | :white_check_mark: Supported |
+| **Mould King 4.0 Power Module**  <br/> <img width="200" alt="mk40" src="https://github.com/user-attachments/assets/c3ec0708-9cdb-4308-a025-21dcd572bf07" /> | :white_check_mark: Supported |
 | **Mould King 6.0 Power Module**  | :white_check_mark: Supported |
 
 
