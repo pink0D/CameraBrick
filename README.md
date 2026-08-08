@@ -4,6 +4,8 @@
 # The concept
 
 picture
+<img width="1147" height="789" alt="overview" src="https://github.com/user-attachments/assets/687a52b4-1883-42d5-83dd-2bec049c402b" />
+
 
 # Supported ESP32 boards
 
