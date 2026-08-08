@@ -4,7 +4,7 @@
 # The concept
 
 picture
-<img width="1147" height="789" alt="overview" src="https://github.com/user-attachments/assets/687a52b4-1883-42d5-83dd-2bec049c402b" />
+<img width="800" alt="overview" src="https://github.com/user-attachments/assets/687a52b4-1883-42d5-83dd-2bec049c402b" />
 
 
 # Supported ESP32 boards
@@ -21,8 +21,8 @@ picture
 
 CameraBricks supports MK4 (4-channel) and MK6 (6-channel) power modules controlled with simple Bluetooth LE advertising ([MouldKingino](https://github.com/pink0D/MouldKingino)).
 
-<img width="1600" height="1600" alt="mouldking" src="https://github.com/user-attachments/assets/c3ec0708-9cdb-4308-a025-21dcd572bf07" />
-<img width="1600" height="1600" alt="mk60" src="https://github.com/user-attachments/assets/b88d586e-67f1-4b0c-a7f2-5ec4de91fed2" />
+<img width="250" alt="mk40" src="https://github.com/user-attachments/assets/c3ec0708-9cdb-4308-a025-21dcd572bf07" />
+<img width="250" alt="mk60" src="https://github.com/user-attachments/assets/b88d586e-67f1-4b0c-a7f2-5ec4de91fed2" />
 
 
 |  Board  | Status   |
