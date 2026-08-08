@@ -23,12 +23,12 @@ namespace camerabrick {
 
     static class : public EnumMapper<ESP32CameraType> {
             void init() override {
-                addMap(ESP32CameraType::ESP32CAM_OV2640, "ESP32CAM OV2640");
+                addMap(ESP32CameraType::ESP32CAM_GENERIC, "ESP32CAM OV2640");
                 addMap(ESP32CameraType::M5STACK_ATOM_S3R_M12_OV3660, "M5Stack AtomS3R-M12 OV3660");
                 addMap(ESP32CameraType::M5STACK_ATOM_S3R_GC0308, "M5Stack AtomS3R-CAM GC0308");
                 addMap(ESP32CameraType::M5STACK_TIMER_CAMERA_OV3660, "M5Stack Timer Camera OV3660");
 
-                setDefaultEnum(ESP32CameraType::ESP32CAM_OV2640);
+                setDefaultEnum(ESP32CameraType::ESP32CAM_GENERIC);
                 setDefaultString("");
             };
     } ESP32CameraTypeMapper;
@@ -56,8 +56,8 @@ namespace camerabrick {
 
         switch (::CameraBrick.getProfile()->cameraType) {
             
-            case ESP32CameraType::ESP32CAM_OV2640:
-                config = camerabrick::config::ESP32CAM_OV2640();
+            case ESP32CameraType::ESP32CAM_GENERIC:
+                config = camerabrick::config::ESP32CAM_GENERIC();
                 break;
 
             case ESP32CameraType::M5STACK_ATOM_S3R_M12_OV3660:

@@ -20,7 +20,7 @@
 
 #include "app_mk_files.h"
 
-const auto CAMERA_TYPE = camerabrick::ESP32CameraType::ESP32CAM_OV2640;
+const auto CAMERA_TYPE = camerabrick::ESP32CameraType::ESP32CAM_GENERIC;
 
 
 class MouldKingProfile: public camerabrick::Profile, camerabrick::ConfigComponent {

@@ -11,9 +11,7 @@
 
 namespace camerabrick::config {
 
-    ESP32CAM_OV2640::ESP32CAM_OV2640() {
-
-        sensorType = CameraSensorType::OV2640;
+    ESP32CAM_GENERIC::ESP32CAM_GENERIC() {
         
         powerPin = 32;
         powerPinValueOn =  LOW;
@@ -57,8 +55,6 @@ namespace camerabrick::config {
     }
 
     M5STACK_ATOM_S3R_M12_OV3660::M5STACK_ATOM_S3R_M12_OV3660() {
-
-        sensorType = CameraSensorType::OV3660;
         
         powerPin = 18;
         powerPinValueOn =  LOW;
@@ -103,8 +99,6 @@ namespace camerabrick::config {
     }
 
     M5STACK_ATOM_S3R_GC0308::M5STACK_ATOM_S3R_GC0308() {
-
-        sensorType = CameraSensorType::OV3660;
         
         powerPin = 18;
         powerPinValueOn =  LOW;
@@ -149,8 +143,6 @@ namespace camerabrick::config {
     }
 
     M5STACK_TIMER_CAMERA_OV3660::M5STACK_TIMER_CAMERA_OV3660() {
-
-        sensorType = CameraSensorType::OV3660;
         
         powerPin = 2;   // actually ledPin
         powerPinValueOn =  HIGH;
