@@ -46,6 +46,9 @@ namespace camerabrick {
 
             void addWebFiles(const web_data &files);
 
+            void updateToken(std::string token);
+            bool isValidToken(std::string token);
+
         private:            
 
             httpd_handle_t web_httpd = nullptr;
@@ -65,6 +68,8 @@ namespace camerabrick {
             esp_err_t httpd_resp_send_json_chunk(httpd_req_t *req, JsonDocument &json);
 
             std::list<web_data> webData;
+
+            std::string token;
 
     };
 }

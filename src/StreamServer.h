@@ -33,8 +33,6 @@ namespace camerabrick {
 
             void resetStreamTimeout();
             void stopStream();
-            void updateToken(std::string token);
-            bool isValidToken(std::string token);
 
         private:
             
@@ -47,9 +45,6 @@ namespace camerabrick {
             bool streamActive = false;
 
             int64_t streamTimeout = 0;
-
-            std::string token;
-
     };
 }
 

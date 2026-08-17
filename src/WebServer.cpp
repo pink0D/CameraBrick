@@ -168,18 +168,42 @@ namespace camerabrick {
             Serial.println();
             return res;
         }
-
         
         if (ws_pkt.type != HTTPD_WS_TYPE_BINARY) {
             Serial.println("WS Incoming packet is not binary");
             //return ESP_FAIL;
         }
 
-        if (strncmp((const char*)buf,"stop", 4) == 0) {
-            ::camerabrick::comp::StreamServer.stopStream();
+        if (ws_pkt.len < 4 + 1 + 8) {
+            Serial.println("WS Incoming packet invalid");
+            return ESP_FAIL;
         }
 
-        if (strncmp((const char*)buf,"ping", 4) == 0) {
+        char cmd[5];
+        strncpy(cmd, (const char*) buf, 4);
+        cmd[4] = '\0';
+
+        char ws_token[9];
+        strncpy(ws_token, (const char*) &buf[5], 8);
+        ws_token[8] = '\0';
+
+        // stop command is executed before token check
+        if (strncmp(cmd, "stop", 4) == 0) {
+            ::camerabrick::comp::StreamServer.stopStream();
+            this->token = ""; // forces websocket to close
+        }
+
+        // check valid token or close websocket
+        if (this->token != ws_token) {
+
+            int sockfd = httpd_req_to_sockfd(req);
+            if (sockfd != -1) {
+                httpd_sess_trigger_close(req->handle, sockfd);
+            }
+            return ESP_FAIL;
+        }
+
+        if (strncmp(cmd, "ping", 4) == 0) {
 
             ::camerabrick::comp::StreamServer.resetStreamTimeout(); // update stream timeout
             
@@ -190,7 +214,7 @@ namespace camerabrick {
             
             sprintf(json, json_fmt, 
                 rssi, 
-                &buf[5], // timestamp sent thru ws to calculate ping in browser
+                &buf[4+1+8+1], // timestamp sent thru ws to calculate ping in browser
                 ::camerabrick::comp::StreamServer.getFPS(), 
                 ::CameraBrick.getProfile()->getVoltage(), 
                 ::CameraBrick.getProfile()->isLowVoltage() ? "true" : "false");
@@ -212,10 +236,15 @@ namespace camerabrick {
             }            
         }
 
-        if (strncmp((const char*)buf,"data", 4) == 0 ) {
+        if (strncmp(cmd, "data", 4) == 0 ) {
+
+            if (ws_pkt.len < 4 + 1 + 8 + 1 + sizeof(gamepad_raw_data)) {
+                Serial.println("WS Incoming packet invalid (wrong data length)");
+                return ESP_FAIL;
+            }
 
             gamepad_raw_data d;
-            memcpy(&d, &buf[5], sizeof(d));
+            memcpy(&d, &buf[4+1+8+1], sizeof(d));
 
             ::camerabrick::comp::Gamepad.updateData(d);
 
@@ -265,9 +294,17 @@ namespace camerabrick {
 
         json["token"] = token;
 
-        ::camerabrick::comp::StreamServer.updateToken(token);
+        updateToken(token);
 
         return httpd_resp_send_json_chunk(req, json);
+    }
+
+    void WebServer::updateToken(std::string token) {
+        this->token = token;
+    }
+
+    bool WebServer::isValidToken(std::string token) {
+        return ((token == "_secret_") || (token == this->token));
     }
 
     

@@ -126,7 +126,7 @@ namespace camerabrick {
             // check token so only the latest token can be used to get streaming data
             // this prevents camera capture being blocked by browser's background connections left open for closed tabs
 
-            if (!isValidToken(req_token)) {
+            if (!::camerabrick::comp::WebServer.isValidToken(req_token)) {
                 Serial.print("Camera stream token=");
                 Serial.print(req_token.c_str());
                 Serial.println(" is invalid, stopping stream");
@@ -229,14 +229,5 @@ namespace camerabrick {
     void StreamServer::stopStream() {
         streamTimeout = 0;
     }
-
-    void StreamServer::updateToken(std::string token) {
-        this->token = token;
-    }
-
-    bool StreamServer::isValidToken(std::string token) {
-        return ((token == "secret") || (token == this->token));
-    }
-
 
 }
