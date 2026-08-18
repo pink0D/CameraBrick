@@ -1,4 +1,7 @@
+_This is legacy CameraBrick version. For the latest version, please refer to [main branch](https://github.com/pink0D/CameraBrick)_
+
 # CameraBrick
+
 ESP32-CAM adaptation for use as an FPV camera with LEGO Technic / Power Functions.
 This repo includes PCB files and modified code from CameraWebServer. 
 Main differences include:
