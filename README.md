@@ -1,18 +1,20 @@
 # Overview
 **CameraBrick** is an Arduino library for building WiFi FPV controllers for Mould King Power Modules. 
 
-# The concept
-
-<img width="800" alt="overview" src="https://github.com/user-attachments/assets/687a52b4-1883-42d5-83dd-2bec049c402b" />
-
 # Demo
 
 [YouTube demo](https://www.youtube.com/watch?v=O1w-PtrD3Yg)
 
+# The concept
+
+<img width="800" alt="overview" src="https://github.com/user-attachments/assets/687a52b4-1883-42d5-83dd-2bec049c402b" />
+
 # Wiki
 
 [Powering options](https://github.com/pink0D/CameraBrick/wiki/Powering-options)
+
 [Flashing the firmware](https://github.com/pink0D/CameraBrick/wiki/Flashing-the-firmware)
+
 [Using the CameraBrick](https://github.com/pink0D/CameraBrick/wiki/Using-the-CameraBrick)
 
 # Supported ESP32 boards
