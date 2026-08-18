@@ -1,0 +1,5 @@
+.vscode/*
+.vs/*
+.rest
+secrets.h
+secrets1.h

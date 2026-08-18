@@ -1,69 +1,50 @@
-# CameraBrick
-ESP32-CAM adaptation for use as an FPV camera with LEGO Technic / Power Functions.
-This repo includes PCB files and modified code from CameraWebServer. 
-Main differences include:
-1. Lowest possible camera resoulution for highest possible framerate. Maximum FPS is dependend mainly on WiFi signal level and the hub's ability to provide enough electrical power to the camera module.
-2. mDNS so you can reach the video server by hostname
+# Overview
+**CameraBrick** is an Arduino library for building WiFi FPV controllers for Mould King Power Modules. 
 
-[YouTube demo video - FPV](https://www.youtube.com/watch?v=FWp9zUCGctc)
+# Demo
 
-# GeekServo adapter
-This PCB and sketch can be also used as an adapter to control a GeekServo with a **Mould King Power Module 4.0**. You can use just the servo functionality without connecting the OV2640 camera module (but ESP32-CAM board is still required).
+[YouTube demo](https://www.youtube.com/watch?v=O1w-PtrD3Yg)
 
-[YouTube demo video - GeekServo](https://www.youtube.com/watch?v=8iWpP2kZVIc)
+# The concept
 
-# Important notice
+<img width="800" alt="overview" src="https://github.com/user-attachments/assets/687a52b4-1883-42d5-83dd-2bec049c402b" />
 
-1. The camera module consumes quite a lot of electrical power and is very sensitive to undervoltage. Most LEGO compatible Power Functions remote hubs are able to provide required power, however if your vehicle also contains a lot of motors, you can drain the hub's battery very fast or even burn it. Think of a connected cammera as if it is a constantly rotating L-motor at full speed.
-2. The module becomes very hot very quickly. Do not touch it while it is working and immediatly after powering off.
+# Wiki
 
-# Materials needed
+[Powering options](https://github.com/pink0D/CameraBrick/wiki/Powering-options)
 
-1. ESP32-CAM board
-2. (optional - only needed for the FPV) OV2640 camera module
-3. ESP32-CAM-MB or other USB-Serial adapter for uploading the sketch
-4. 9V to 5V buck converter (N7805 or similar, capable to deliver 5V/1A for the camera module). **Do not use older LM7805 for powering the camera since it is very inefficient - the power from the hub will be wasted, resulting in 1) even more extreme heating 2) quick battery drain 3) lower FPS due to undervoltage 4) possible damaging of the hub/battery.** If the board is used just as a GeekServo adapter (without enabling the FPV functionality) you can use a simple LM7805, which is sufficient for a servo.
-5. 30x70mm PCB breadboard or factory made PCB with files from this repo
-6. 2x female 8-pin headers 
-8. Power Functions extension cable
-9. (optional) Any kind of 2.54 4-wire connectors to solder on PCB and extension cable to make it detachable.
-10. (optional - only needed for GeekServo adapter) 2x 1 kOhm and 2x 2.2k Ohm resistors 
-11. (optional - only needed for GeekServo adapter) 3-pin male pins for attaching the GeekServo 
-12. Some wires and other soldering accessories
+[Flashing the firmware](https://github.com/pink0D/CameraBrick/wiki/Flashing-the-firmware)
 
-## PCB schematic for FPV
-![wiring!](https://github.com/pink0D/CameraBrick/blob/main/Schematics/fpv_pf_bb.png?raw=true)
+[Using the CameraBrick](https://github.com/pink0D/CameraBrick/wiki/Using-the-CameraBrick)
 
-## PCB schematic for GeekServo
-![wiring!](https://github.com/pink0D/CameraBrick/blob/main/Schematics/fpv_geek_bb.png?raw=true)
-If you experience power related issues, try adding [capacitors](https://github.com/pink0D/CameraBrick/blob/main/Schematics/fpv_geek_caps.png?raw=true)
+# Supported ESP32 boards
 
-## Production PCB
-You can order a factory made PCB to reduce soldering. Production files are located in PCB directory of this repo.
+| Board | View | Status |
+| :--- | :---- |  :---- |
+| **Generic ESP32CAM** (a.k.a. AI Thinker) | <img width="150" alt="esp32cam_nobg" src="https://github.com/user-attachments/assets/e5fd0934-cef5-497d-852f-630c7d8b94a2" /> | :white_check_mark: Supported, tested with OV2640 (OV3660 should work as well) |
+| [M5Stack AtomS3R-M12](https://docs.m5stack.com/en/core/AtomS3R-M12) | <img width="150" alt="m5-m12" src="https://github.com/user-attachments/assets/63c0360c-79ce-4625-8cb4-d7040f23323f" /> | :white_check_mark: Supported |
+| [M5Stack AtomS3R-CAM](https://docs.m5stack.com/en/core/AtomS3R%20Cam) | <img width="150" alt="m5-cam" src="https://github.com/user-attachments/assets/2af9948b-57ea-4870-a004-84ac6bd53c3e" /> | :white_check_mark: Supported (possible lower framerate, low field of view) |
+| [M5Stack TimerCamera-F](https://docs.m5stack.com/en/unit/timercam_f) | <img width="150" alt="m5-f" src="https://github.com/user-attachments/assets/4b785262-971f-4030-98fb-e7b1044d9e7e" /> | :white_check_mark: Supported |
+| [M5Stack TimerCamera-X](https://docs.m5stack.com/en/unit/timercam_x) | <img width="150" alt="m5-x" src="https://github.com/user-attachments/assets/ac1b68bc-f24a-4f96-a806-5cdd800a9cae" /> | :white_check_mark: Supported (low field of view)|
 
-**ATTENTION** the PCB silkscreen has an error: 2K and 1K resistors need to be swapped!
+# Supported Mould King modules
 
-After soldering the components, the board should look like this:
+CameraBrick supports MK4 (4-channel) and MK6 (6-channel) power modules controlled with simple Bluetooth LE advertising ([MouldKingino](https://github.com/pink0D/MouldKingino)).
 
-<a href="https://postimg.cc/Btk3LGKq" target="_blank"><img src="https://i.postimg.cc/Btk3LGKq/IMG-9656.jpg" alt="IMG-9656"/></a>
-<a href="https://postimg.cc/cr3Sf5Rf" target="_blank"><img src="https://i.postimg.cc/cr3Sf5Rf/IMG-9657.jpg" alt="IMG-9657"/></a>
-<a href="https://postimg.cc/23VmS53c" target="_blank"><img src="https://i.postimg.cc/23VmS53c/IMG-9655.jpg" alt="IMG-9655"/></a>
+Only MK modules are supported - other clones use different protocols not yet implemented for Arduino 
 
-## Power Functions connector pinout
-Before soldering, please review the pinout of the Power Functions Connector [Power Functions](https://www.philohome.com/pf/pfcon.jpg)
-![PF Connector!](https://www.philohome.com/pf/pfcon.jpg "PF Connector")
+| Module | View | Status |
+| :--- | :--- | :---- |
+| **Mould King 4.0 Power Module** <br/> <img width="50" alt="MK logo" src="https://github.com/user-attachments/assets/7d436cb4-5eb3-4f68-9fc1-404786991aca" /> | <img width="150" alt="mk40" src="https://github.com/user-attachments/assets/c3ec0708-9cdb-4308-a025-21dcd572bf07" /> | :white_check_mark: Supported |
+| **Mould King 6.0 Power Module** <br/> <img width="50" alt="MK logo" src="https://github.com/user-attachments/assets/7d436cb4-5eb3-4f68-9fc1-404786991aca" /> | <img width="150" alt="mk60" src="https://github.com/user-attachments/assets/b88d586e-67f1-4b0c-a7f2-5ec4de91fed2" /> | :white_check_mark: Supported |
 
-# Uploading the sketch
-1. Install ESP32 Boards in Arudino IDE [https://docs.espressif.com/projects/arduino-esp32/en/latest/installing.html](https://docs.espressif.com/projects/arduino-esp32/en/latest/installing.html)
-2. Download sketch code from this repo
-3. Install [ESP32Servo](https://docs.arduino.cc/libraries/esp32servo/) library dependency
-4. Review the defines in the beginning of the main **CameraBrick.ino**. You can enable FPV and GeekServo functionality independently or use both at the same time.
-5. Update **secrets.h** with your WiFi credentials
-6. *(optional)* Update **esp_camera_server.h** if you are using a different board or camera model. AI Thinker & OV2640 are the default options
-7. Set board to ESP32 Dev Module and enable PSRAM in Tools menu
-8. Upload the sketch to ESP32CAM either using [ESP32-CAM-MB](https://randomnerdtutorials.com/upload-code-esp32-cam-mb-usb/) or [USB-Serial adapter](https://randomnerdtutorials.com/program-upload-code-esp32-cam/)
-   
-# Viewing the video
-There are two main options
-1. Open [http://fpvbrick.local](http://fpvbrick.local) in desktop or mobile browser
-2. Open [http://fpvbrick.local:81/stream](http://fpvbrick.local:81/stream) in video player that supports streaming ([VLC media player](https://www.videolan.org/vlc/) for example)
+
+# License & credits
+- CameraBrick is open source and licensed under the MIT License
+
+# Contacts
+Issues: [CameraBrick issues](https://github.com/pink0D/CameraBrick/issues)
+
+Discussions: [CameraBrick discussions](https://github.com/pink0D/CameraBrick/discussions)
+
+EMail: [pink0D.github@gmail.com](mailto:pink0d.github@gmail.com)
