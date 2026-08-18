@@ -63,6 +63,7 @@ namespace camerabrick {
         }
 
         bool enableCapture = true;
+        bool checkTimeout = true;
         std::string req_token = "";
 
         char*  buf;
@@ -78,6 +79,13 @@ namespace camerabrick {
                 if (strcmp(param_value,"false") == 0) {
                     enableCapture = false;
                     Serial.println("Camera capture disabled with query param: capture=false");
+                }
+            }
+
+            if (httpd_query_key_value(buf, "timeout", param_value, sizeof(param_value)) == ESP_OK) {
+                if (strcmp(param_value,"false") == 0) {
+                    checkTimeout = false;
+                    Serial.println("Camera timeout disabled with query param: timeout=false");
                 }
             }
 
@@ -191,7 +199,9 @@ namespace camerabrick {
             int64_t time_now = esp_timer_get_time();
 
             // stop streaming if timeout was not updated by ping in websocket handler
-            if (time_now > this->streamTimeout) {
+            if (checkTimeout && (time_now > this->streamTimeout) ) {
+                Serial.print("Camera stream timeout: token=");
+                Serial.println(req_token.c_str());
                 break;
             }
 

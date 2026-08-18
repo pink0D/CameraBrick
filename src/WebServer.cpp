@@ -196,6 +196,9 @@ namespace camerabrick {
         // check valid token or close websocket
         if (this->token != ws_token) {
 
+            Serial.print("Websocket closing: token=");
+            Serial.println(ws_token);
+
             int sockfd = httpd_req_to_sockfd(req);
             if (sockfd != -1) {
                 httpd_sess_trigger_close(req->handle, sockfd);
