@@ -1,3 +1,5 @@
+# Legacy version
+
 _This is legacy CameraBrick version. For the latest version, please refer to [main branch](https://github.com/pink0D/CameraBrick)_
 
 # CameraBrick
@@ -35,11 +37,11 @@ This PCB and sketch can be also used as an adapter to control a GeekServo with a
 12. Some wires and other soldering accessories
 
 ## PCB schematic for FPV
-![wiring!](https://github.com/pink0D/CameraBrick/blob/main/Schematics/fpv_pf_bb.png?raw=true)
+![wiring!](https://github.com/pink0D/CameraBrick/blob/legacy/Schematics/fpv_pf_bb.png?raw=true)
 
 ## PCB schematic for GeekServo
-![wiring!](https://github.com/pink0D/CameraBrick/blob/main/Schematics/fpv_geek_bb.png?raw=true)
-If you experience power related issues, try adding [capacitors](https://github.com/pink0D/CameraBrick/blob/main/Schematics/fpv_geek_caps.png?raw=true)
+![wiring!](https://github.com/pink0D/CameraBrick/blob/legacy/Schematics/fpv_geek_bb.png?raw=true)
+If you experience power related issues, try adding [capacitors](https://github.com/pink0D/CameraBrick/blob/legacy/Schematics/fpv_geek_caps.png?raw=true)
 
 ## Production PCB
 You can order a factory made PCB to reduce soldering. Production files are located in PCB directory of this repo.
