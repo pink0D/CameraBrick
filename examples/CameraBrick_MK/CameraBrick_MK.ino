@@ -25,13 +25,14 @@ const auto CAMERA_TYPE = camerabrick::ESP32CameraType::ESP32CAM_GENERIC;
 
 class MouldKingProfile: public camerabrick::Profile, camerabrick::ConfigComponent {
 
-    enum class MouldKingModuleType {None, MK40, MK60};
+    enum class MouldKingModuleType {None, MK40, MK40x3, MK60};
 
     class : public camerabrick::EnumMapper<MouldKingModuleType> {
             void init() override {
-                addMap(MouldKingModuleType::None, "");
-                addMap(MouldKingModuleType::MK40, "MK40");
-                addMap(MouldKingModuleType::MK60, "MK60");
+                addMap(MouldKingModuleType::None,   "");
+                addMap(MouldKingModuleType::MK40,   "MK40");
+                addMap(MouldKingModuleType::MK40x3, "MK40x3");
+                addMap(MouldKingModuleType::MK60,   "MK60");
 
                 setDefaultEnum(MouldKingModuleType::None);
                 setDefaultString("");
@@ -40,8 +41,9 @@ class MouldKingProfile: public camerabrick::Profile, camerabrick::ConfigComponen
 
     struct ChannelConfig {
         camerabrick::gamepad::Input input;
-        camerabrick::gamepad::Button button;
         bool invert;
+        camerabrick::gamepad::Button button1;
+        camerabrick::gamepad::Button button2;
     };
 
     public:
@@ -49,9 +51,8 @@ class MouldKingProfile: public camerabrick::Profile, camerabrick::ConfigComponen
 
         static const int advertisingTimeout = 30; 
 
-        static const int MouldKingMaxChannels = 6;
+        static const int MouldKingMaxChannels = 12;
         ChannelConfig channelConfig[MouldKingMaxChannels];
-        bool channelToggle[MouldKingMaxChannels];
 
         MouldKingModuleType moduleType;
         IMKModule *mk = nullptr;
@@ -92,7 +93,11 @@ class MouldKingProfile: public camerabrick::Profile, camerabrick::ConfigComponen
                     mk = new MouldKing40();
                     break;
 
-                case MouldKingModuleType::MK60:
+                case MouldKingModuleType::MK40x3:
+                    mk = new MouldKingMulti40();
+                    break;
+
+                    case MouldKingModuleType::MK60:
                     mk = new MouldKing60();
                     break;
             }
@@ -129,18 +134,14 @@ class MouldKingProfile: public camerabrick::Profile, camerabrick::ConfigComponen
 
                 float value = gamepad.getInputValue(channelConfig[i].input); // will return 0 if input is not set
 
-                if (channelConfig[i].button != camerabrick::gamepad::Button::NullButton) {
+                if (channelConfig[i].invert)
+                    value = -value;                
 
-                    if (gamepad.getButtonClick(channelConfig[i].button)) { // will return false is button is not set
-                        channelToggle[i] = !channelToggle[i];
-                    }
+                if (gamepad.getButtonState(channelConfig[i].button1)) // will return false is button is not set
+                    value = 1.0f;
 
-                    value = channelToggle[i]  ? 1.0 : 0.0;
-                }
-
-                if (channelConfig[i].invert) {
-                    value = -value;
-                }
+                if (gamepad.getButtonState(channelConfig[i].button2)) // will return false is button is not set
+                    value = -1.0f;
 
                 mk->updateMotorOutput(i, value);
             }                            
@@ -175,8 +176,9 @@ class MouldKingProfile: public camerabrick::Profile, camerabrick::ConfigComponen
 
             for (int i=0; i<MouldKingMaxChannels; i++) {
                 channelConfig[i].input = camerabrick::gamepad::Input::NullInput;
-                channelConfig[i].button = camerabrick::gamepad::Button::NullButton;
                 channelConfig[i].invert = false;
+                channelConfig[i].button1 = camerabrick::gamepad::Button::NullButton;
+                channelConfig[i].button2 = camerabrick::gamepad::Button::NullButton;
             }
 
         };
@@ -188,8 +190,9 @@ class MouldKingProfile: public camerabrick::Profile, camerabrick::ConfigComponen
             for (int i=0; i<MouldKingMaxChannels; i++) {
 
                 channelConfig[i].input = camerabrick::gamepad::GamepadInputMapper.mapStringToEnum(json["channels"][i]["input"]);
-                channelConfig[i].button = camerabrick::gamepad::GamepadButtonMapper.mapStringToEnum(json["channels"][i]["button"]);
-                channelConfig[i].invert = json["channels"][i]["invert"];
+                channelConfig[i].invert = json["channels"][i]["invertInput"];
+                channelConfig[i].button1 = camerabrick::gamepad::GamepadButtonMapper.mapStringToEnum(json["channels"][i]["button1"]);
+                channelConfig[i].button2 = camerabrick::gamepad::GamepadButtonMapper.mapStringToEnum(json["channels"][i]["button2"]);
             }
 
             return true;
@@ -206,8 +209,9 @@ class MouldKingProfile: public camerabrick::Profile, camerabrick::ConfigComponen
                 JsonDocument jsonChannel;
 
                 jsonChannel["input"] = camerabrick::gamepad::GamepadInputMapper.mapEnumToString(channelConfig[i].input);
-                jsonChannel["button"] = camerabrick::gamepad::GamepadButtonMapper.mapEnumToString(channelConfig[i].button);
-                jsonChannel["invert"] = channelConfig[i].invert;
+                jsonChannel["invertInput"] = channelConfig[i].invert;
+                jsonChannel["button1"] = camerabrick::gamepad::GamepadButtonMapper.mapEnumToString(channelConfig[i].button1);
+                jsonChannel["button2"] = camerabrick::gamepad::GamepadButtonMapper.mapEnumToString(channelConfig[i].button2);
 
                 json["channels"][i] = jsonChannel;
             }
