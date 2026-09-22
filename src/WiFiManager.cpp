@@ -204,7 +204,7 @@ namespace camerabrick {
         std::string new_ap_password = json["ap"]["password"];
 
         int new_connectTimeout = json["timeout"];
-        if (new_connectTimeout == 0) {
+        if (new_connectTimeout <= 0) {
             new_connectTimeout = 10;
         }
 

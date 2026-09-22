@@ -39,9 +39,23 @@ class MouldKingProfile: public camerabrick::Profile, camerabrick::ConfigComponen
             };
     } MouldKingModuleTypeMapper;
 
+    enum class ChannelType {Disabled, Analog, Buttons};
+
+    class : public camerabrick::EnumMapper<ChannelType> {
+            void init() override {
+                addMap(ChannelType::Disabled, "");
+                addMap(ChannelType::Analog,   "Analog");
+                addMap(ChannelType::Buttons,  "Buttons");
+
+                setDefaultEnum(ChannelType::Disabled);
+                setDefaultString("");
+            };
+    } ChannelTypeMapper;    
+
     struct ChannelConfig {
+        ChannelType type;
         camerabrick::gamepad::Input input;
-        bool invert;
+        bool invertInput;
         camerabrick::gamepad::Button button1;
         camerabrick::gamepad::Button button2;
     };
@@ -97,13 +111,9 @@ class MouldKingProfile: public camerabrick::Profile, camerabrick::ConfigComponen
                     mk = new MouldKingMulti40();
                     break;
 
-                    case MouldKingModuleType::MK60:
+                case MouldKingModuleType::MK60:
                     mk = new MouldKing60();
                     break;
-            }
-
-            for (int i=0; i<mk->getChannelCount(); i++) {
-                channelToggle[i] = false;
             }
 
             mk->connect(); // sync connect, waits 1 sec
@@ -132,16 +142,24 @@ class MouldKingProfile: public camerabrick::Profile, camerabrick::ConfigComponen
 
             for (int i=0; i<mk->getChannelCount(); i++) {
 
-                float value = gamepad.getInputValue(channelConfig[i].input); // will return 0 if input is not set
+                float value = 0;                
+                
+                if (channelConfig[i].type == ChannelType::Analog) {
 
-                if (channelConfig[i].invert)
-                    value = -value;                
+                    value = gamepad.getInputValue(channelConfig[i].input); // will return 0 if input is not set
 
-                if (gamepad.getButtonState(channelConfig[i].button1)) // will return false is button is not set
-                    value = 1.0f;
+                    if (channelConfig[i].invertInput)
+                        value = -value;                
+                }
 
-                if (gamepad.getButtonState(channelConfig[i].button2)) // will return false is button is not set
-                    value = -1.0f;
+                if (channelConfig[i].type == ChannelType::Buttons) {
+
+                    if (gamepad.getButtonState(channelConfig[i].button1)) // will return false is button is not set
+                        value = 1.0f;
+
+                    if (gamepad.getButtonState(channelConfig[i].button2)) // will return false is button is not set
+                        value = -1.0f;
+                }
 
                 mk->updateMotorOutput(i, value);
             }                            
@@ -158,7 +176,6 @@ class MouldKingProfile: public camerabrick::Profile, camerabrick::ConfigComponen
             // do not use resetChannels because it starts advertisement with no timeout
             for (int i=0; i<mk->getChannelCount(); i++) {
                 mk->updateMotorOutput(i, 0);
-                channelToggle[i] = false;
             }
 
             // advertise immediately with limited timeout 
@@ -175,8 +192,9 @@ class MouldKingProfile: public camerabrick::Profile, camerabrick::ConfigComponen
             moduleType = MouldKingModuleType::None;
 
             for (int i=0; i<MouldKingMaxChannels; i++) {
+                channelConfig[i].type = ChannelType::Disabled;
                 channelConfig[i].input = camerabrick::gamepad::Input::NullInput;
-                channelConfig[i].invert = false;
+                channelConfig[i].invertInput = false;
                 channelConfig[i].button1 = camerabrick::gamepad::Button::NullButton;
                 channelConfig[i].button2 = camerabrick::gamepad::Button::NullButton;
             }
@@ -189,8 +207,9 @@ class MouldKingProfile: public camerabrick::Profile, camerabrick::ConfigComponen
 
             for (int i=0; i<MouldKingMaxChannels; i++) {
 
+                channelConfig[i].type = ChannelTypeMapper.mapStringToEnum(json["channels"][i]["type"]);
                 channelConfig[i].input = camerabrick::gamepad::GamepadInputMapper.mapStringToEnum(json["channels"][i]["input"]);
-                channelConfig[i].invert = json["channels"][i]["invertInput"];
+                channelConfig[i].invertInput = json["channels"][i]["invertInput"];
                 channelConfig[i].button1 = camerabrick::gamepad::GamepadButtonMapper.mapStringToEnum(json["channels"][i]["button1"]);
                 channelConfig[i].button2 = camerabrick::gamepad::GamepadButtonMapper.mapStringToEnum(json["channels"][i]["button2"]);
             }
@@ -208,8 +227,9 @@ class MouldKingProfile: public camerabrick::Profile, camerabrick::ConfigComponen
 
                 JsonDocument jsonChannel;
 
+                jsonChannel["type"] = ChannelTypeMapper.mapEnumToString(channelConfig[i].type);
                 jsonChannel["input"] = camerabrick::gamepad::GamepadInputMapper.mapEnumToString(channelConfig[i].input);
-                jsonChannel["invertInput"] = channelConfig[i].invert;
+                jsonChannel["invertInput"] = channelConfig[i].invertInput;
                 jsonChannel["button1"] = camerabrick::gamepad::GamepadButtonMapper.mapEnumToString(channelConfig[i].button1);
                 jsonChannel["button2"] = camerabrick::gamepad::GamepadButtonMapper.mapEnumToString(channelConfig[i].button2);
 
